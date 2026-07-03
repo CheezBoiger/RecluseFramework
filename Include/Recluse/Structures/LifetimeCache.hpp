@@ -1,0 +1,236 @@
+//
+#pragma once
+
+#include "Recluse/Types.hpp"
+
+#include "Recluse/Memory/Allocator.hpp"
+
+#include <memory>
+#include <unordered_map>
+
+namespace Recluse {
+
+
+// Lifetime cache manages the lifetime of objects based on a time tick. The tick is updated manually,
+// but is used to determine the age of the objects that are contained. In the case of graphics, for each
+// frame, we tick once and check the oldest resources, if it needs to be cleaned up. Any recently accessed
+// resources are tagged to the recent tick, and pushed to the top of the list, which will then sort the oldest
+// to the bottom. Any untagged resources, are left with the last tick they were accessed with, to which the last
+// resource is cleaned up first.
+template<typename IdentificationKey, typename Object, typename AllocatorType = MallocAllocator>
+class LifetimeCache
+{
+    // Lifetime node holds onto the data, as well as the key and age.
+    // The age is tagged, every time it is accessed, to the current tick of this lifetime container.
+    // Once tagged, it will be pushed to the top of the list as recently accessed.
+    struct LifetimeNode
+    {
+        Object                  data;
+        U32                     age;
+        IdentificationKey       key;
+        struct LifetimeNode*    next;
+        struct LifetimeNode*    prev;
+
+        LifetimeNode(IdentificationKey key, Object&& data = Object())
+            : data(std::move(data))
+            , age(0)
+            , key(key)
+            , next(nullptr)
+            , prev(nullptr)
+        { }
+    };
+public:
+
+    LifetimeCache(const AllocatorType& allocator = AllocatorType()) 
+        : m_root(nullptr)
+        , m_tail(nullptr)
+        , m_tick(0)
+        , m_nodes(0)
+        , m_allocator(allocator)
+    { }
+
+    ~LifetimeCache()
+    {
+        clear();
+    }
+
+    // For each object in the cache. This will iterate through all objects.
+    template<typename Func>
+    void forEach(Func func)
+    {
+        LifetimeNode* current = m_root;
+        while (current)
+        {
+            func(current->key, current->data);
+            current = current->next;
+        }
+    }
+
+    // Clear the resource cache. Mainly used if we need to clear all resources from this container.
+    // Fully wipes out the structure.
+    void clear()
+    {
+        LifetimeNode* current = m_root;
+        while (current)
+        {
+            LifetimeNode* next = current->next;
+            current->~LifetimeNode();
+            operator delete (current, &m_allocator);
+            current = next;
+        }
+        m_cacheMap.clear();
+        m_root = nullptr;
+        m_tail = nullptr;
+    }
+
+    // Update the age tick for this container.
+    void updateTick() { m_tick += 1; }
+
+    // Checks the last resource, and destroys it if the age is too old.
+    template<typename DeleteFunc>
+    void check(U32 numChecks, U32 ageGap, DeleteFunc deleteFunc)
+    {
+        if (!empty())
+        {
+            U32 idx = 0;
+            while (idx < numChecks)
+            {
+                LifetimeNode* tail = m_tail;
+                const U32 tick = m_tick;
+                const U32 ageRate = tick - tail->age;
+                if (tail && (ageRate >= ageGap))
+                {
+                    // Assign tail to its previous node.
+                    m_tail = tail->prev;
+                    // Cut off the tail of the linked list.
+                    if (tail != m_root)
+                    {
+                        tail->prev->next = nullptr;
+                    }
+                    else
+                    {
+                        // If it is the root, we must null both root and tail.
+                        m_root = nullptr;
+                        m_tail = nullptr;
+                    }
+                    // Delete the data, destroy the isolated node,
+                    // and decrement the number of nodes in the linked list.
+                    deleteFunc(tail->key, tail->data);
+                    // Don't forget to erase the mapped portion too.
+                    m_cacheMap.erase(tail->key);
+                    tail->~LifetimeNode();
+                    operator delete (tail, &m_allocator);
+                    m_nodes -= 1;
+                }
+                else
+                {
+                    // Break from the loop if we didn't delete the tail, this means it is still the oldest, and not 
+                    // deleted, so no point in trying the next node.
+                    break;
+                }
+                // Increment the check index.
+                ++idx;
+            }
+        }
+    }
+
+    // Check if an object with the input key, already exists in this 
+    // cache. True if the key-object pair exists. False otherwise.
+    Bool inCache(IdentificationKey key)
+    {
+        return (m_cacheMap.find(key) != m_cacheMap.end());
+    }
+
+    // Refers to a resource in the cache.
+    // Call this function first, before insert() to ensure we aren't creating 
+    // duplicates.
+    Object* refer(IdentificationKey key)
+    {
+        auto it = m_cacheMap.find(key);
+        if (it != m_cacheMap.end())
+        {
+            pushFront(it->second);
+            return &(it->second->data);
+        }
+        return nullptr;
+    }
+
+    // Inserts a new object into this container. Note that this will
+    // blindly create a new resource in this container, so be sure to 
+    // call refer() first, before inserting.
+    Object* insert(IdentificationKey key, Object&& data)
+    {
+        // We need to create a new entry.
+        LifetimeNode* node = new (&m_allocator) LifetimeNode(key);
+        node->key = key;
+        node->age = m_tick;
+        node->data = std::move(data);
+        if (!m_root)
+        {
+            // No root, means this is the first entry.
+            m_root = node;
+            m_tail = node;
+        }
+        else
+        {
+            // Push the node to the front of the list.
+            pushFront(node);
+        }
+        m_cacheMap.insert(std::make_pair(key, node));
+        m_nodes += 1;
+        pushFront(node);
+        return &(m_cacheMap[key]->data);
+    }
+
+    // Check if the cache is empty, no existing nodes in this container.
+    Bool empty() const { return (m_nodes == 0); }
+
+private:
+    // Push node to the front of the linked list.
+    // This will perform an inplace move, which has no performance impact.
+    void pushFront(LifetimeNode* node)
+    {
+        if (!node) return;
+        // Tag this node to the current tick.
+        // If it is already root, ignore this call.
+        // If not root, push this node to the front.
+        node->age = m_tick;
+        if (node != m_root)
+        {
+            // Assign the prev and next nodes of this node, to eachother.
+            // This will isolate our current node.
+            LifetimeNode* prev = node->prev;
+            LifetimeNode* next = node->next;
+            if (prev)
+            {
+                // Assign previous to the next node after this node,
+                // Then check if this node is tail. If so, assign tail to previous.
+                prev->next = next;
+                if (node == m_tail)
+                    m_tail = prev;
+            }
+            if (next)
+                next->prev = prev;
+            // Now push the node to the top.
+            node->prev = nullptr;
+            node->next = m_root;
+            m_root->prev = node;
+            m_root = node;
+        }
+    }
+    // Map cache, used for O(1) access. Only holds onto weak references of the node.
+    // Actual data is stored in linked list.
+    std::unordered_map<IdentificationKey, LifetimeNode*> m_cacheMap;
+    AllocatorType   m_allocator;
+    // The link list data structure. Houses the actual node and data associated. Has poor cache locality,
+    // but might not be totally bad since we aren't iterating through all resources sequentially. Still though,
+    // it might be worth exploring an array type of data structure.
+    LifetimeNode*   m_root;
+    LifetimeNode*   m_tail;
+    U32             m_nodes;
+
+    // Cache tick, used to determine the current state of the cache, and to check the age gap of 
+    // any resources not accessed after a while.
+    U32 m_tick;
+};
+} // Recluse
