@@ -76,7 +76,9 @@ public:
         , m_isBorderless(false)
         , m_pMouseHandle(nullptr)
         , m_keyCallback(nullptr)
-        , m_onWindowResizeCallback(nullptr) 
+        , m_onWindowResizeCallback(nullptr)
+        , m_windowRelocateCallback(nullptr)
+        , m_mouseCallback(nullptr)
     { 
         m_status.mustChangeScreen = true; 
         m_status.mustMinimize = false;

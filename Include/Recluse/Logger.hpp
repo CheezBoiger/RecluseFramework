@@ -45,7 +45,7 @@ struct LogMessage
     std::string msg;
     std::string channel;
     std::string time;       // Optional Time.
-    LogType type;
+    LogType     type = LogType_Msg;
 };
 
 

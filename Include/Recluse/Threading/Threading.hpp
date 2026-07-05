@@ -29,11 +29,12 @@ enum ThreadState
     ThreadState_Unknown
 };
 
+typedef void* ThreadPayload;
 
 struct RecluseFramework_PUBLIC_API Thread 
 {
     ThreadFunction      func;
-    void*               payload;
+    ThreadPayload       payload;
     SizeT               uid;
     void*               handle;
     U32                 resultCode;

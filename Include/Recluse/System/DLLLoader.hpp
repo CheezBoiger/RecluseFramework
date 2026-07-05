@@ -10,18 +10,18 @@ namespace Recluse {
 
 typedef void* FunctionHandle;
 
-class R_OS_SPECIFIC RecluseFramework_PUBLIC_API DllLoader 
+class R_OS_SPECIFIC DllLoader 
 {
 public:
-    DllLoader(const std::string& dllName = "");
-    ~DllLoader();
+    RecluseFramework_PUBLIC_API DllLoader(const std::string& dllName = "");
+    RecluseFramework_PUBLIC_API ~DllLoader();
 
-    Bool isLoaded();
+    RecluseFramework_PUBLIC_API Bool isLoaded();
 
-    Bool load(const std::string& dllName);
-    Bool unload();
+    RecluseFramework_PUBLIC_API Bool load(const std::string& dllName);
+    RecluseFramework_PUBLIC_API Bool unload();
 
-    FunctionHandle procAddress(const std::string& name);
+    RecluseFramework_PUBLIC_API FunctionHandle procAddress(const std::string& name);
 
 private:
     std::string     name;

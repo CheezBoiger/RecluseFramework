@@ -14,6 +14,9 @@ class Win32RuntimeTick
 {
 public:
     Win32RuntimeTick()
+        : m_time(0ull)
+        , m_currentTimeS(0.f)
+        , m_deltaTimeS(0.f)
     {
         updateLastTimeS(getCurrentTickS(), 0.f);
     }

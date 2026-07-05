@@ -16,13 +16,14 @@ class Mouse : public IInputController
 {
 public:
     Mouse()
-        : m_xLastPosition(0.f)
-        , m_yLastPosition(0.f)
-        , m_xPosition(0.f)
-        , m_yPosition(0.f)
+        : m_xLastPosition(0)
+        , m_yLastPosition(0)
+        , m_xPosition(0)
+        , m_yPosition(0)
         , m_isShowing(false)
         , m_isClamped(false)
-        , m_isEnabled(false) { }
+        , m_isEnabled(false)
+        , m_buttonStates(0) { }
 
     virtual RecluseFramework_PUBLIC_API ResultCode    integrateInput(const IInputFeedback& feedback) override;
     virtual RecluseFramework_PUBLIC_API ResultCode    initialize(const std::string& controllerName) override;

@@ -112,6 +112,12 @@ void MemoryPool::clear(U32 defaultValue)
 }
 
 
+void MemoryPool::reset()
+{
+    clear();
+}
+
+
 void MemoryPool::release()
 {
     // Broadcast to observer scanners.

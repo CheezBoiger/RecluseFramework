@@ -1,0 +1,18 @@
+// Copyright (c) Recluse Engine.
+// This file is auto-generated. DO NOT MODIFIY
+#ifndef ${RECLUSE_EXPORT_NAME}_exports_HPP
+#define ${RECLUSE_EXPORT_NAME}_exports_HPP
+
+#include "Recluse/Arch.hpp"
+
+#if ${RECLUSE_EXPORT_NAME}_DLL_EXPORT
+// The export api preprocessor macro used to define whether the routine is to be publicly 
+// callable to other applications.
+#define ${RECLUSE_EXPORT_NAME}_PUBLIC_API R_EXPORT_API
+#else
+// The import api preprocessor macro used to define whether the routine is to be publicly 
+// used by an application.
+#define ${RECLUSE_EXPORT_NAME}_PUBLIC_API R_IMPORT_API
+#endif
+
+#endif /* ${RECLUSE_EXPORT_NAME}_exports_HPP */

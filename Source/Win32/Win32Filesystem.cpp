@@ -44,7 +44,7 @@ ResultCode File::readFrom(FileBufferData* pFile, const std::string& filePath, Fl
             // Null terminate, as we don't gaurantee one.
             (*pFile)[sz-1] = '\0';
         }
-        R_DEBUG(R_CHANNEL_WIN32, "Read %d bytes of data from file: %s", pFile->size(), filePath.c_str());
+        R_DEBUG(R_CHANNEL_WIN32, "Read %llu bytes of data from file: %s", pFile->size(), filePath.c_str());
     }
 
     return result;
@@ -63,7 +63,7 @@ ResultCode File::writeTo(const char* pData, U64 sizeBytes, const std::string& fi
         result = file.write(pData, sizeBytes);
         file.close();
 
-        R_DEBUG(R_CHANNEL_WIN32, "Wrote %d bytes of data to file: %s", sizeBytes, filePath.c_str());
+        R_DEBUG(R_CHANNEL_WIN32, "Wrote %llu bytes of data to file: %s", sizeBytes, filePath.c_str());
     }
 
     return result;
@@ -119,7 +119,7 @@ static ResultCode runFileAsyncTask(void* pData)
     
     // Handle the cleanup right after. Our thread upon creation, will pass the payload over, to which after
     // will be destroyed. This means that this thread task will need to be responsible for cleaning up this payload,
-    // since it is an unsafe allocation, and memory leaks will suffice.
+    // since it is an unsafe allocation, and memory leaks will occur.
     delete pTemporary;
 
     return result;

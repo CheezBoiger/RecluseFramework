@@ -21,7 +21,6 @@ set ( RECLUSE_FRAMEWORK_THIRD_PARTY ${RECLUSE_THIRDPARTY_DIR} )
 
 include ( CMake/Definitions.cmake )
 include ( CMake/Core.cmake )
-include ( CMake/Graphics.cmake )
 include ( CMake/Animation.cmake )
 include ( CMake/Math.cmake )
 

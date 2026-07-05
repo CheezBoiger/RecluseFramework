@@ -191,6 +191,8 @@ void RealtimeTick::updateWatch(U64 id, U32 watchType)
 
 
 RealtimeTick::RealtimeTick(U32 watchType)
+    : m_currentTimeS(0.f)
+    , m_deltaTimeS(0.f)
 {
     R_ASSERT(watchType < MAX_WATCH_TYPE_INDICES);
 
@@ -275,7 +277,7 @@ LRESULT CALLBACK win32RuntimeProc(HWND hwnd,UINT uMsg, WPARAM wParam, LPARAM lPa
         case WM_INPUT:
         {
             RAWINPUT* raw   = gWin32Runtime.lpb;
-            UINT dwSize;
+            UINT dwSize     = 0;
             UINT result     = S_OK;
             GetRawInputData((HRAWINPUT)lParam, RID_INPUT, nullptr, &dwSize, sizeof(RAWINPUTHEADER)); 
             Mouse* pMouse   = pWindow ? pWindow->getMouseHandle() : nullptr;
@@ -587,7 +589,7 @@ std::wstring asciiToWide(const std::string& str)
     std::wstring wst;
     i32 sizeBytes = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (i32)str.size(), NULL, 0);
     wst.resize(sizeBytes);
-    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (i32)str.size(), &wst[0], wst.size());
+    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (i32)str.size(), &wst[0], (i32)wst.size());
     return wst;
 }
 } // Recluse

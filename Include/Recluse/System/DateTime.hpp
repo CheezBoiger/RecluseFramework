@@ -63,7 +63,7 @@ public:
 		m_formatted = parseFormat(sFormat, desc);
 	}
 
-	DateFormatter(DateFormatter&& fmt)
+	DateFormatter(DateFormatter&& fmt) noexcept
 	{
 		m_formatted = std::move(fmt.m_formatted);
 	}

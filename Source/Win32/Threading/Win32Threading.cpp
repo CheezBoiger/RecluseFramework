@@ -125,7 +125,7 @@ ResultCode destroyMutex(Mutex mutex)
 
 ResultCode lockMutex(Mutex mutex, U64 waitMs)
 {
-    DWORD waitTimeMs = (waitMs == kInfiniteMs) ? INFINITE : waitMs;
+    DWORD waitTimeMs = (DWORD)((waitMs == kInfiniteMs) ? INFINITE : waitMs);
     DWORD result = WaitForSingleObject(mutex, waitTimeMs);
 
     switch (result) 
@@ -211,7 +211,7 @@ u32 testAndSet(volatile uptr ptr, U32 offset)
 
 ResultCode CriticalSection::initialize()
 {
-    R_STATIC_ASSERT_FORMAT(m_section == NULL, "Critical Section is not null prior to initialization! Could indicate was already created? section=%d", m_section);
+    R_STATIC_ASSERT_FORMAT(m_section == NULL, "Critical Section is not null prior to initialization! Could indicate was already created? section=%llu", (u64)m_section);
     m_section = malloc(sizeof(CRITICAL_SECTION));
     InitializeCriticalSection((LPCRITICAL_SECTION)m_section);
     return RecluseResult_Ok;

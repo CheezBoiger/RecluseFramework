@@ -37,7 +37,7 @@ protected:
     // Realtime tick initializer. Be sure to call this once and reference
     // the object across all objects!
     R_OS_CALL RealtimeTick(U32 watchType);
-    RealtimeTick() { }
+    RealtimeTick() : m_currentTimeS(0.f), m_deltaTimeS(0.f) { }
 
     // Current time in seconds.
     F32 m_currentTimeS;

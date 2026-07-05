@@ -77,6 +77,9 @@ public:
     // This does not free the pool memory!
     void                clear(U32 defaultValue = 0);
 
+    // Is exactly clear, just another name for it.
+    void                reset();
+
     // Free the pool memory! This will delete the memory!
     void                release();
 
@@ -109,6 +112,7 @@ private:
 // Name aliases
 typedef MemoryPool MemoryArena;
 typedef MemoryPool ScratchMem;
+typedef MemoryPool MemoryHeap;
 typedef ScratchMem ScratchMemory;
 
 } // Recluse
