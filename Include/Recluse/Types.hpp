@@ -81,6 +81,9 @@ typedef U32 SizeT;
 
 typedef SizeT sizet;
 typedef UPtr uptr;
+typedef UPtr Ptr;
+typedef UPtr uptr_t;
+typedef UPtr ptr_t;
 
 // Check the OS architecture bitness size. 
 // This is the size of the supported instruction set.
@@ -119,6 +122,7 @@ enum RecluseResult
     RecluseResult_Unsupported,
     RecluseResult_InvalidVersion,
     RecluseResult_DeviceLost,
+    RecluseResult_Refused,
 };
 } // Recluse
 #endif // RECLUSE_TYPES_HPP

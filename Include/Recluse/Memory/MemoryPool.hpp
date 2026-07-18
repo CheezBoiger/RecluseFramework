@@ -62,7 +62,7 @@ public:
     U64                 getTotalSizeBytes() const { return m_totalSzBytes; }
 
     // Get the page size used for the pool, in bytes.
-    U64                 getPageSzBytes() const { return m_pageSzBytes; }
+    U64                 getPageSizeBytes() const { return m_pageSzBytes; }
 
     inline void*        getRawAddressAt(U64 sizeBytes) { return reinterpret_cast<void*>(m_baseAddr + sizeBytes); }
     inline UPtr         getPtrAddressAt(U64 sizeBytes) { return (m_baseAddr + sizeBytes); }

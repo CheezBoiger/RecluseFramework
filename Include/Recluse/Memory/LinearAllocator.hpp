@@ -56,13 +56,15 @@ public:
     }
 
     ResultCode onCleanUp() override 
-    {
+    {   
+        // Nothing to clean
         return RecluseResult_Ok;
     }
 
     ResultCode onFree(Allocation* pOutput) override
     {
-        return RecluseResult_Ok;
+        R_ASSERT(false, "Linear allocator doesn't allow freeing!");
+        return RecluseResult_NoImpl;
     }
 
 private:

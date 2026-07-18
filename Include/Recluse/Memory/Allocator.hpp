@@ -47,6 +47,7 @@ public:
         ResultCode result = onInitialize();
         if (result == RecluseResult_Ok)
             m_initialized = true;
+        setLastError(result);
     }
 
     //! Allocation requirements.
@@ -59,7 +60,7 @@ public:
             m_totalAllocations  += 1;
             m_usedSizeBytes     += allocation.sizeBytes;
         }
-        m_lastError = err;
+        setLastError(err);
         return allocation.baseAddress;
     }
 
@@ -74,17 +75,17 @@ public:
             m_usedSizeBytes     -= alloc.sizeBytes;
             m_totalAllocations  -= 1;
         }
-        m_lastError = err;
+        setLastError(err);
     }
 
 
     // Reset the allocator. This is more colloquially known as Clear().
     void reset() 
     {
-        onReset();
+        ResultCode result = onReset();
         m_usedSizeBytes     = 0;
         m_totalAllocations  = 0;
-        m_lastError = RecluseResult_Ok;
+        setLastError(result);
     }
 
     void cleanUp() 
@@ -95,7 +96,7 @@ public:
         m_usedSizeBytes     = 0;
         m_pMemoryBaseAddr   = 0ull;
         
-        m_lastError = result;
+        setLastError(result);
         if (result == RecluseResult_Ok)
             m_initialized = false;
     }
@@ -131,6 +132,9 @@ protected:
     virtual ResultCode onCleanUp() = 0;
 
 private:
+    // A readable last error function, it is not really needed unless you manually override the last error.
+    void setLastError(ResultCode err) { m_lastError = err; }
+
     U64     m_totalSizeBytes;
     UPtr    m_pMemoryBaseAddr;
     U64     m_usedSizeBytes;

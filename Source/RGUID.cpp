@@ -15,7 +15,7 @@ RGUID generateRGUID(U64 seed)
         seedValue = dev();
     }
 
-    std::mt19937 twister(seedValue);
+    std::mt19937 twister((U32)seedValue);
 
     RGUID nRGUID;
     nRGUID.version.major = std::uniform_int_distribution<U64>()(twister);

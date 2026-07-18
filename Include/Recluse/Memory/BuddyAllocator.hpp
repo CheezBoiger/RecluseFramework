@@ -24,6 +24,9 @@ class RecluseFramework_PUBLIC_API BuddyAllocator : public Allocator
 {
 private:
     typedef Allocation BlockAllocation;
+    BuddyAllocator()
+        : m_maxOrder(0) 
+    { }
 
     ResultCode onInitialize() override;
     ResultCode onAllocate(Allocation* pOutput, U64 requestSz, U16 alignment) override;
