@@ -1,18 +1,18 @@
 //
-#include "Recluse/Memory/BuddyAllocator.hpp"
-#include "Recluse/Memory/MemoryCommon.hpp"
-#include "Recluse/Math/MathCommons.hpp"
-#include "Recluse/Messaging.hpp"
+#include <Recluse/Memory/BuddyAllocationStrategy.hpp>
+#include <Recluse/Memory/MemoryCommon.hpp>
+#include <Recluse/Math/MathCommons.hpp>
+#include <Recluse/Messaging.hpp>
 
 #include <math.h>
 
 namespace Recluse {
 
 
-ResultCode BuddyAllocator::onInitialize()
+ResultCode BuddyStrategy::onInitialize(Allocator<BuddyStrategy>* super)
 {
-    U64 totalSzBytes    = getTotalSizeBytes();
-    UPtr baseAddr    = getBaseAddr();
+    U64 totalSzBytes = super->getTotalSizeBytes();
+    UPtr baseAddr    = super->getBaseAddress();
 
     // Size must be power of 2.
     R_ASSERT(Math::isPowerOf2(totalSzBytes));
@@ -35,7 +35,7 @@ ResultCode BuddyAllocator::onInitialize()
 }
 
 
-ResultCode BuddyAllocator::onAllocate(Allocation* pOutput, U64 requestSz, U16 alignment)
+ResultCode BuddyStrategy::onAllocate(Allocator<BuddyStrategy>* super, Allocation* pOutput, U64 requestSz, U16 alignment)
 {
     R_ASSERT(Math::isPowerOf2(alignment));
     U64 neededSzBytes   = requestSz + (alignment - 1);
@@ -107,7 +107,7 @@ ResultCode BuddyAllocator::onAllocate(Allocation* pOutput, U64 requestSz, U16 al
 }
 
 
-ResultCode BuddyAllocator::onFree(Allocation* pOutput)
+ResultCode BuddyStrategy::onFree(Allocator<BuddyStrategy>* super, Allocation* pOutput)
 {
     if (m_allocatedBlocks.find(pOutput->baseAddress) == m_allocatedBlocks.end()) 
     {
@@ -118,7 +118,7 @@ ResultCode BuddyAllocator::onFree(Allocation* pOutput)
     // Get the block allocation using the aligned address.
     const BlockAllocation& blockAllocation = m_allocatedBlocks[pOutput->baseAddress];    
 
-    UPtr baseAddr    = getBaseAddr();
+    UPtr baseAddr       = super->getBaseAddress();
     //U64 szBytes         = pOutput->sizeBytes;
     U32 nthBit          = (U32)ceil(log2(blockAllocation.sizeBytes));
     U32 buddyNumber     = (U32)(blockAllocation.baseAddress / blockAllocation.sizeBytes);
@@ -174,13 +174,13 @@ ResultCode BuddyAllocator::onFree(Allocation* pOutput)
 }
 
 
-ResultCode BuddyAllocator::onReset()
+ResultCode BuddyStrategy::onReset(Allocator<BuddyStrategy>* super)
 {
     return RecluseResult_NoImpl;
 }
 
 
-ResultCode BuddyAllocator::onCleanUp()
+ResultCode BuddyStrategy::onCleanUp(Allocator<BuddyStrategy>* super)
 {
     // Wipe out everything.
     m_freeList.clear();

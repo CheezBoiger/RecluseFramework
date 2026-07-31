@@ -1,13 +1,13 @@
 //
-#include "Recluse/Memory/MemoryPool.hpp"
-#include "Recluse/Memory/MemoryScan.hpp"
+#include <Recluse/Memory/MemoryPool.hpp>
+#include <Recluse/Memory/MemoryScan.hpp>
+#include <Recluse/Math/MathCommons.hpp>
 
-#include "Recluse/Messaging.hpp"
+#include <Recluse/Messaging.hpp>
 
 #include <stdlib.h>
 
 namespace Recluse {
-
 
 
 void MemoryPool::copy(MemoryPool* dst, U64 dstOffset, MemoryPool* src, U64 srcOffset, U64 sizeBytes)
@@ -15,11 +15,37 @@ void MemoryPool::copy(MemoryPool* dst, U64 dstOffset, MemoryPool* src, U64 srcOf
     R_ASSERT_FORMAT(dst && src, "Either src or dst memory pools are nullptr!");
     R_ASSERT_FORMAT(sizeBytes > 0, "Requested 0 bytes to copy!");
 
-    UPtr dstMemoryBase      = dst->getBaseAddress();
-    UPtr srcMemoryBase      = src->getBaseAddress();
-    UPtr dstMemoryOffset    = dstMemoryBase + dstOffset;
-    UPtr srcMemoryOffset    = srcMemoryBase + srcOffset;
-    memcpy((void*)dstMemoryOffset, (void*)srcMemoryOffset, sizeBytes);
+    const UPtr dstMemoryBase      = dst->getBaseAddress();
+    const UPtr srcMemoryBase      = src->getBaseAddress();
+    const UPtr srcMemoryOffset    = srcMemoryBase + srcOffset;
+    UPtr dstMemoryOffset          = dstMemoryBase + dstOffset;
+    memcpy((void*)dstMemoryOffset, (const void*)srcMemoryOffset, sizeBytes);
+}
+
+
+void MemoryPool::copy(void* dst, U64 dstOffset, void* src, U64 srcOffset, U64 sizeBytes)
+{
+    R_ASSERT_FORMAT(dst && src, "Either src or dst memory pools are nullptr!");
+    R_ASSERT_FORMAT(sizeBytes > 0, "Requested 0 bytes to copy!");
+
+    const UPtr dstMemoryBase      = (U64)dst;
+    const UPtr srcMemoryBase      = (U64)src;
+    const UPtr srcMemoryOffset    = srcMemoryBase + srcOffset;
+    UPtr dstMemoryOffset          = dstMemoryBase + dstOffset;
+    memcpy((void*)dstMemoryOffset, (const void*)srcMemoryOffset, sizeBytes);
+}
+
+
+void MemoryPool::copy(UPtr dst, U64 dstOffset, UPtr src, U64 srcOffset, U64 sizeBytes)
+{
+    R_ASSERT_FORMAT(dst && src, "Either src or dst memory pools are nullptr!");
+    R_ASSERT_FORMAT(sizeBytes > 0, "Requested 0 bytes to copy!");
+
+    const UPtr dstMemoryBase      = dst;
+    const UPtr srcMemoryBase      = src;
+    const UPtr srcMemoryOffset    = srcMemoryBase + srcOffset;
+    UPtr dstMemoryOffset          = dstMemoryBase + dstOffset;
+    memcpy((void*)dstMemoryOffset, (const void*)srcMemoryOffset, sizeBytes);
 }
 
 
@@ -134,8 +160,34 @@ void MemoryPool::release()
         // Free the base address, and since it is malloc'ed, we need to point the address back to zero, to let the pool know
         // we no longer have memory attached.
         free((void*)m_baseAddr);
+        m_isMalloc = false;
     }
 
     m_baseAddr = 0;
+}
+
+
+Bool MemoryPool::resize(U64 newSizeBytes, U64 pageSize)
+{
+    if (m_baseAddr != 0)
+        return false;
+    R_ASSERT_FORMAT(newSizeBytes != 0, "New size for memory pool resize, should not be 0! Ignoring...");
+    if (newSizeBytes == 0)
+        return false;
+
+    U64 sizeToCopyBytes = Math::minimum(newSizeBytes, m_totalSzBytes);
+
+    void* newMemoryBase = malloc(newSizeBytes);
+    copy((UPtr)newMemoryBase, 0, m_baseAddr, 0,  sizeToCopyBytes);
+    
+    // Release the base address, then use the new memory base.
+    release();
+
+    m_baseAddr = (UPtr)newMemoryBase;
+    m_isMalloc = true;
+    m_totalSzBytes = newSizeBytes;
+    m_pageSzBytes = pageSize;
+
+    return true;
 }
 } // Recluse

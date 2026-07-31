@@ -28,6 +28,14 @@ namespace Recluse {
 
 static const UPtr kNullPtr = 0;
 
+enum MemoryAllocationStrategy
+{
+    MemoryAllocationStrategy_Unknown = 0,
+    MemoryAllocationStrategy_Dynamic = 0x0001,
+    MemoryAllocationStrategy_Static = 0x0002,
+    MemoryAllocationStrategy_Lazy = 0x0004,
+};
+
 template<class T, class S>
 T* rDynamicCast(S* obj)
 {

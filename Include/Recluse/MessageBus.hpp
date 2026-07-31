@@ -1,15 +1,16 @@
 //
 #pragma once
 
-#include "Recluse/Memory/Allocator.hpp"
-#include "Recluse/Memory/MemoryPool.hpp"
-#include "Recluse/Memory/MemoryCommon.hpp"
-#include "Recluse/Types.hpp"
-#include "Recluse/RGUID.hpp"
-#include "Recluse/Serialization/Hasher.hpp"
-#include "Recluse/Threading/Threading.hpp"
+#include <Recluse/Memory/Allocator.hpp>
+#include <Recluse/Memory/MemoryPool.hpp>
+#include <Recluse/Memory/MemoryCommon.hpp>
+#include <Recluse/Memory/LinearAllocationStrategy.hpp>
+#include <Recluse/Types.hpp>
+#include <Recluse/RGUID.hpp>
+#include <Recluse/Serialization/Hasher.hpp>
+#include <Recluse/Threading/Threading.hpp>
 
-#include "RecluseFramework_exports.hpp"
+#include <RecluseFramework_exports.hpp>
 
 #include <queue>
 #include <functional>
@@ -110,7 +111,7 @@ public:
 
 private:
     MutexGuard                      m_messageQueueMutex;
-    Allocator*                      m_pMessageAllocator;
+    Allocator<LinearStrategy>*      m_pMessageAllocator;
     MemoryPool                      m_messageMemPool;
     std::queue<EventMessage*>       m_messages;             //< The Message queue.
     std::vector<MessageReceiveFunc> m_messageReceivers;

@@ -16,5 +16,10 @@ Bool intersects(const Frustum& frustum, const Bounds3d& bounds)
            intersects(frustum.faces[Frustum::FACE_NEAR], bounds) &&
            intersects(frustum.faces[Frustum::FACE_FAR], bounds);
 }
+
+
+Frustum::Frustum(const Float3& position, const Float3& direction)
+{
+}
 } // Math
 } // Recluse

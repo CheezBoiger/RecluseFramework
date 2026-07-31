@@ -2,12 +2,12 @@
 #include "Win32Common.hpp"
 #include "Win32Runtime.hpp"
 
-#include "Recluse/Messaging.hpp"
-#include "Recluse/Filesystem/Filesystem.hpp"
+#include <Recluse/Messaging.hpp>
+#include <Recluse/Filesystem/Filesystem.hpp>
 
-#include "Recluse/Threading/Threading.hpp"
-#include "Recluse/Memory/LinearAllocator.hpp"
-#include "Recluse/Memory/MemoryPool.hpp"
+#include <Recluse/Threading/Threading.hpp>
+#include <Recluse/Memory/LinearAllocationStrategy.hpp>
+#include <Recluse/Memory/MemoryPool.hpp>
 
 #include <algorithm>
 #include <vector>

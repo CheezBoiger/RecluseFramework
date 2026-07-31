@@ -4,6 +4,8 @@ project("RecluseFramework")
 
 include ( ${CMAKE_SOURCE_DIR}/Systems/CMake/GenerateExports.cmake )
 
+option(ENABLE_TESTS "Builds Unit tests for the framework" OFF)
+
 set ( RECLUSE_FRAMEWORK_NAME "RecluseFramework" )
 set ( RECLUSE_FRAMEWORK_MINOR 0 )
 set ( RECLUSE_FRAMEWORK_MAJOR 0 )
@@ -63,4 +65,7 @@ install(TARGETS ${RECLUSE_FRAMEWORK_NAME}
 install(TARGETS ${RECLUSE_FRAMEWORK_NAME}
         CONFIGURATIONS Release
         ARCHIVE DESTINATION Lib)
-   
+  
+if (ENABLE_TESTS)
+	add_subdirectory(Test)
+endif()

@@ -1,10 +1,10 @@
 //
 #pragma once
 
-#include "Recluse/Math/Plane.hpp"
-#include "Recluse/Math/Matrix44.hpp"
+#include <Recluse/Math/Plane.hpp>
+#include <Recluse/Math/Matrix44.hpp>
 
-#include "RecluseFramework_exports.hpp"
+#include <RecluseFramework_exports.hpp>
 
 namespace Recluse {
 namespace Math {
@@ -42,6 +42,8 @@ struct Frustum
         FACE_FAR,
         FACE_PLANES_COUNT = 6
     };
+
+    Frustum(const Float3& position, const Float3& direction);
 
     // 
     Plane faces[FACE_PLANES_COUNT];

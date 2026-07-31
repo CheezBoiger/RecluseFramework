@@ -18,29 +18,40 @@ struct BuddyBlock
     U64     blockId;        // block id.
 };
 
-// Buddy allocator implementation.
+// Buddy allocator strategy implementation.
 //
-class RecluseFramework_PUBLIC_API BuddyAllocator : public Allocator 
+class RecluseFramework_PUBLIC_API BuddyStrategy
 {
-private:
+public:
+
     typedef Allocation BlockAllocation;
-    BuddyAllocator()
+
+    BuddyStrategy()
         : m_maxOrder(0) 
     { }
 
-    ResultCode onInitialize() override;
-    ResultCode onAllocate(Allocation* pOutput, U64 requestSz, U16 alignment) override;
-    ResultCode onFree(Allocation* pOutput) override;
-    ResultCode onReset() override;
-    ResultCode onCleanUp() override;
+    ResultCode onInitialize(Allocator<BuddyStrategy>* super);
+    ResultCode onAllocate(Allocator<BuddyStrategy>* super, Allocation* pOutput, U64 requestSz, U16 alignment);
+    ResultCode onFree(Allocator<BuddyStrategy>* super, Allocation* pOutput);
+    ResultCode onReset(Allocator<BuddyStrategy>* super);
+    ResultCode onCleanUp(Allocator<BuddyStrategy>* super);
+
+    ResultCode onRebase(Allocator<BuddyStrategy>* super, UPtr newAddress, U64 sizeBytes)
+    {
+        return RecluseResult_NoImpl;
+    }
 
     inline BlockAllocation makeBlockAllocation(U64 blockAddress, U64 blockSzBytes)
     {
         return { blockAddress, blockSzBytes };
     }
 
+private:
+
     std::vector<std::vector<BuddyBlock>>        m_freeList;
     std::map<SizeT, BlockAllocation>            m_allocatedBlocks;
     U32                                         m_maxOrder;
 };
+
+typedef Allocator<BuddyStrategy> BuddyAllocator;
 } // Recluse

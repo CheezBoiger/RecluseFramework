@@ -96,17 +96,17 @@ set ( RECLUSE_CORE_BUILD
     ${RECLUSE_CORE_SOURCE_LOGGING}/Logger.cpp
 	${RECLUSE_CORE_SOURCE_LOGGING}/LogOverloads.cpp
     ${RECLUSE_CORE_INCLUDE_MEMORY}/Allocator.hpp
-    ${RECLUSE_CORE_INCLUDE_MEMORY}/BuddyAllocator.hpp
-    ${RECLUSE_CORE_INCLUDE_MEMORY}/FreeListAllocator.hpp
+    ${RECLUSE_CORE_INCLUDE_MEMORY}/BuddyAllocationStrategy.hpp
+    ${RECLUSE_CORE_INCLUDE_MEMORY}/FreeListAllocationStrategy.hpp
     ${RECLUSE_CORE_INCLUDE_MEMORY}/MemoryPool.hpp
     ${RECLUSE_CORE_INCLUDE_MEMORY}/MemoryScan.hpp
-    ${RECLUSE_CORE_INCLUDE_MEMORY}/PoolAllocator.hpp
-    ${RECLUSE_CORE_INCLUDE_MEMORY}/LinearAllocator.hpp
+    ${RECLUSE_CORE_INCLUDE_MEMORY}/PoolAllocationStrategy.hpp
+    ${RECLUSE_CORE_INCLUDE_MEMORY}/LinearAllocationStrategy.hpp
 	${RECLUSE_CORE_INCLUDE_MEMORY}/LinearScratchMemory.hpp
     ${RECLUSE_CORE_INCLUDE_MEMORY}/MemoryCommon.hpp
     ${RECLUSE_CORE_SOURCE_MEMORY}/MemoryPool.cpp
-    ${RECLUSE_CORE_SOURCE_MEMORY}/BuddyAllocator.cpp
-	${RECLUSE_CORE_SOURCE_MEMORY}/PoolAllocator.cpp
+    ${RECLUSE_CORE_SOURCE_MEMORY}/BuddyAllocationStrategy.cpp
+	${RECLUSE_CORE_SOURCE_MEMORY}/PoolAllocationStrategy.cpp
 	${RECLUSE_CORE_SOURCE_MEMORY}/AllocatorCommon.cpp
     ${RECLUSE_CORE_INCLUDE_THREADING}/Threading.hpp
     ${RECLUSE_CORE_INCLUDE_THREADING}/ThreadPool.hpp

@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "Recluse/Types.hpp"
+#include <Recluse/Types.hpp>
 
-#include "RecluseFramework_exports.hpp"
+#include <RecluseFramework_exports.hpp>
 
 namespace Recluse {
 
@@ -73,6 +73,10 @@ public:
     // Pre allocates the memory pool.
     void                preAllocate(U64 szBytes, U64 pageSize = 4096ull);
 
+    // Resizes the pool, must already have been pre allocated. Returns true if the resize was successful, false if failed. If failed,
+    // Will continue to keep the original memory pool size and allocation.
+    Bool                resize(U64 newSizeBytes, U64 pageSize);
+
     // Clear the pool, wipe out the state and set to default value.
     // This does not free the pool memory!
     void                clear(U32 defaultValue = 0);
@@ -88,6 +92,8 @@ public:
 
     // Copy contents from source memory pool, to destination memory pool.
     static void         copy(MemoryPool* dst, U64 dstOffset, MemoryPool* src, U64 srcOffset, U64 sizeBytes);
+    static void         copy(void* dst, U64 dstOffset, void* src, U64 srcOffset, U64 sizeBytes);
+    static void         copy(UPtr dst, U64 dstOffset, UPtr src, U64 srcOffset, U64 sizeBytes);
 
 private:
 

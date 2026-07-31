@@ -394,7 +394,9 @@ R_OS_CALL RecluseFramework_PUBLIC_API std::wstring asciiToWide(const std::string
 
 namespace GlobalCommands {
 namespace Internal {
-    struct DataListener;
+    // DataListener is an observer of a pointer to a data variable. Usually intended for 
+    // command list modification and reading, it can be used to reach out to modify 
+    // variables outside of it's module across other areas.
     struct DataListener
     {
         void* value;

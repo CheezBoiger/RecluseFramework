@@ -5,7 +5,7 @@
 #else
     #define XXH_IMPLEMENTATION 1
     #define XXH_STATIC_LINKING_ONLY 1
-#include <xxHash/xxh3.h>
+    #include <xxHash/xxh3.h>
     #define USE_XXHASH 1
 #endif
 
