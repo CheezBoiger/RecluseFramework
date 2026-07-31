@@ -95,7 +95,11 @@ public:
     static void         copy(void* dst, U64 dstOffset, void* src, U64 srcOffset, U64 sizeBytes);
     static void         copy(UPtr dst, U64 dstOffset, UPtr src, U64 srcOffset, U64 sizeBytes);
 
+    // Perform a paged aligned allocation, should be used for full custom allocators and essential large heap allocations,
+    // not for tiny ones!
     static void*        pageAlignedMalloc(U64 sizeBytes, U32 pageSize);
+
+    // Free a paged aligned allocation.
     static void         freePagedAlignedMalloc(void* ptr);
 
 private:
