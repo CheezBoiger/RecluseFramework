@@ -169,7 +169,7 @@ void MemoryPool::release()
 
 Bool MemoryPool::resize(U64 newSizeBytes, U64 pageSize)
 {
-    if (m_baseAddr != 0)
+    if (m_baseAddr == 0)
         return false;
     R_ASSERT_FORMAT(newSizeBytes != 0, "New size for memory pool resize, should not be 0! Ignoring...");
     if (newSizeBytes == 0)

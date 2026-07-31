@@ -32,9 +32,12 @@ public:
             Type* ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, pointerSizeBytes());
             if (allocator->getLastError() == RecluseResult_OutOfMemory)
             {
-                memArena.resize(memArena.getTotalSizeBytes() * 2, memArena.getPageSizeBytes());
+                // Resize with double to original, plus the requested size.
+                memArena.resize(memArena.getTotalSizeBytes() * 2 + sizeof(Type) * arrayCount, memArena.getPageSizeBytes());
                 allocator = (LinearAllocator*)memArena.getBaseAddress();
-                allocator->rebase(memArena.getPtrAddressAt(sizeof(LinearAllocator), memArena.getTotalSizeBytes() - sizeof(LinearAllocator)));
+                ResultCode result = allocator->rebase(memArena.getPtrAddressAt(sizeof(LinearAllocator)), memArena.getTotalSizeBytes() - sizeof(LinearAllocator));
+                if (result == RecluseResult_Ok)
+                    ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, pointerSizeBytes());
             }
             return ptr;
         }
@@ -55,6 +58,11 @@ public:
     U32 getTotalAllocations() const 
     {
         return allocator->getTotalAllocations();
+    }
+
+    UPtr getBaseAddress() const
+    {
+        return memArena.getBaseAddress() + sizeof(LinearAllocator);
     }
 
 private:
