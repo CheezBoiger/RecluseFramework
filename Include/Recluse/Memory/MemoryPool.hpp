@@ -48,10 +48,10 @@ class RecluseFramework_PUBLIC_API MemoryPool
 {
 public:
     // Memory pool allocation construction.
-    MemoryPool(U64 szBytes = 0ull, U64 pageSize = 4096ull);
+    MemoryPool(U64 szBytes = 0ull, U64 pageSize = 0ull);
 
     // Memory must be malloc'ed or new'ed. Can not be stack local memory!
-    MemoryPool(void* ptr, U64 szBytes, U64 pagSz = 4096ull);
+    MemoryPool(void* ptr, U64 szBytes, U64 pagSz = 0ull);
 
     ~MemoryPool();
         
@@ -71,7 +71,7 @@ public:
     void                addScanner(MemoryScanner* scanner);
 
     // Pre allocates the memory pool.
-    void                preAllocate(U64 szBytes, U64 pageSize = 4096ull);
+    void                preAllocate(U64 szBytes, U64 pageSize = 0ull);
 
     // Resizes the pool, must already have been pre allocated. Returns true if the resize was successful, false if failed. If failed,
     // Will continue to keep the original memory pool size and allocation.
@@ -95,12 +95,16 @@ public:
     static void         copy(void* dst, U64 dstOffset, void* src, U64 srcOffset, U64 sizeBytes);
     static void         copy(UPtr dst, U64 dstOffset, UPtr src, U64 srcOffset, U64 sizeBytes);
 
+    static void*        pageAlignedMalloc(U64 sizeBytes, U32 pageSize);
+    static void         freePagedAlignedMalloc(void* ptr);
+
 private:
+    enum { IsMalloc = 1, IsPaged = 2 };
 
     UPtr    m_baseAddr;
     U64     m_totalSzBytes;
     U64     m_pageSzBytes;
-    B32     m_isMalloc;
+    U32     m_flags;
 
     struct MemScanNodes 
     {

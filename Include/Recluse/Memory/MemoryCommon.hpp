@@ -76,4 +76,10 @@ static constexpr R_FORCE_INLINE Type leftShift(Type value, Type bits)
 {
     return R_L_SHIFT(value, bits);
 }
+
+
+static U32 removeBitMask(U32 value, U32 mask)
+{
+    return value & (~mask);
+}
 } // Recluse

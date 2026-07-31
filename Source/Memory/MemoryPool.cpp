@@ -1,6 +1,7 @@
 //
 #include <Recluse/Memory/MemoryPool.hpp>
 #include <Recluse/Memory/MemoryScan.hpp>
+#include <Recluse/Memory/MemoryCommon.hpp>
 #include <Recluse/Math/MathCommons.hpp>
 
 #include <Recluse/Messaging.hpp>
@@ -49,12 +50,37 @@ void MemoryPool::copy(UPtr dst, U64 dstOffset, UPtr src, U64 srcOffset, U64 size
 }
 
 
+void* MemoryPool::pageAlignedMalloc(U64 sizeBytes, U32 pageSize)
+{
+    size_t totalSizeBytes = sizeBytes + pageSize + sizeof(void*);
+
+    void* rawPtr = malloc(totalSizeBytes);
+
+    if (!rawPtr) return nullptr;
+    
+    UPtr unalignedAddress = (UPtr)rawPtr + sizeof(void*);
+    UPtr alignedAddress = Recluse::align(unalignedAddress, pageSize);
+
+    ((void**)alignedAddress)[-1] = rawPtr;
+    return (void*)alignedAddress;
+}
+
+
+void MemoryPool::freePagedAlignedMalloc(void* ptr)
+{
+    if (!ptr) return;
+
+    void* rawPtr = ((void**)ptr)[-1];
+    free(rawPtr);
+}
+
+
 MemoryPool::MemoryPool(U64 szBytes, U64 pageSz)
     : m_baseAddr(0ull)
     , m_pageSzBytes(pageSz)
     , m_totalSzBytes(0ull)
     , m_pScanStart(nullptr)
-    , m_isMalloc(false)     // Start with no malloc, if we are just empty initializing this pool.
+    , m_flags(0)     // Start with no malloc, if we are just empty initializing this pool.
 {
     preAllocate(szBytes, pageSz);
 }
@@ -65,7 +91,7 @@ MemoryPool::MemoryPool(void* ptr, U64 szBytes, U64 pageSz)
     , m_pageSzBytes(pageSz)
     , m_totalSzBytes(0ull)
     , m_pScanStart(nullptr)
-    , m_isMalloc(false)
+    , m_flags(0)
 {
     m_baseAddr = (UPtr)ptr;
     m_pageSzBytes = pageSz;
@@ -115,15 +141,17 @@ void MemoryPool::preAllocate(U64 szBytes, U64 pageSz)
         return;
     }
 
-    if (pageSz <= 4096ull)
+    if (pageSz > 0)
     {
-
+        m_baseAddr = (UPtr)pageAlignedMalloc(allocationSizeBytes, pageSz);
+        m_flags |= IsPaged;
     }
+    else
+        m_baseAddr      = (UPtr)malloc(allocationSizeBytes);
 
-    m_baseAddr      = (UPtr)malloc(allocationSizeBytes);
     m_pageSzBytes   = pageSz;
     m_totalSzBytes  = allocationSizeBytes;
-    m_isMalloc      = true;
+    m_flags         |= IsMalloc;
 }
 
 
@@ -155,12 +183,16 @@ void MemoryPool::release()
         trav = trav->next;
     }
 
-    if (m_baseAddr && m_isMalloc)
+    if (m_baseAddr && (m_flags & IsMalloc))
     {
         // Free the base address, and since it is malloc'ed, we need to point the address back to zero, to let the pool know
         // we no longer have memory attached.
-        free((void*)m_baseAddr);
-        m_isMalloc = false;
+        if (m_flags & IsPaged)
+            freePagedAlignedMalloc((void*)m_baseAddr);
+        else
+            free((void*)m_baseAddr);
+
+        m_flags = removeBitMask(m_flags, (IsMalloc | IsPaged));
     }
 
     m_baseAddr = 0;
@@ -177,14 +209,22 @@ Bool MemoryPool::resize(U64 newSizeBytes, U64 pageSize)
 
     U64 sizeToCopyBytes = Math::minimum(newSizeBytes, m_totalSzBytes);
 
-    void* newMemoryBase = malloc(newSizeBytes);
+    void* newMemoryBase = nullptr;
+    if (m_flags & IsPaged)
+        newMemoryBase = pageAlignedMalloc(newSizeBytes, pageSize);
+    else
+        newMemoryBase = malloc(newSizeBytes);
+
     copy((UPtr)newMemoryBase, 0, m_baseAddr, 0,  sizeToCopyBytes);
     
     // Release the base address, then use the new memory base.
     release();
 
     m_baseAddr = (UPtr)newMemoryBase;
-    m_isMalloc = true;
+
+    m_flags |= IsMalloc;
+    if (pageSize > 0) m_flags |= IsPaged;
+
     m_totalSzBytes = newSizeBytes;
     m_pageSzBytes = pageSize;
 

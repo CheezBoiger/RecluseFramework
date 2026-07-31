@@ -8,7 +8,7 @@
 namespace Recluse {
 
 
-template<U32 sizeBytes, U32 pageSz = 4096u, Bool dynamic = false>
+template<U32 sizeBytes, Bool dynamic = false, U32 pageSz = 0ull>
 class LinearScratchMemory
 {
 public:
