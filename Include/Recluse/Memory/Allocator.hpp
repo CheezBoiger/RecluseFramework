@@ -34,7 +34,7 @@ typedef struct Allocation
 //!     onCleanUp(Allocator<Strategy>* super)
 //! 
 template<typename Strategy>
-class RecluseFramework_PUBLIC_API Allocator
+class Allocator
 {
 public:
 
@@ -167,14 +167,14 @@ public:
 //          Object* pObj = new (allocator) Object();
 //
 template<typename Strategy>
-RecluseFramework_PUBLIC_API void*   operator new (size_t sizeBytes, Recluse::Allocator<Strategy>* alloc)
+void*   operator new (size_t sizeBytes, Recluse::Allocator<Strategy>* alloc)
 {
     R_ASSERT(alloc != NULL);
     return (void*)alloc->allocate(sizeBytes, Recluse::pointerSizeBytes());
 }
 
 template<typename Strategy>
-RecluseFramework_PUBLIC_API void* operator new[] (size_t bytes, Recluse::Allocator<Strategy>* alloc)
+void* operator new[] (size_t bytes, Recluse::Allocator<Strategy>* alloc)
 {
     R_ASSERT(alloc != NULL);
     return (void*)alloc->allocate(sizeBytes, Recluse::pointerSizeBytes());
@@ -185,7 +185,7 @@ RecluseFramework_PUBLIC_API void* operator new[] (size_t bytes, Recluse::Allocat
 // stuff...
 //
 template<typename Strategy>
-RecluseFramework_PUBLIC_API void    operator delete (void* ptr, Recluse::Allocator<Strategy>* alloc)
+void    operator delete (void* ptr, Recluse::Allocator<Strategy>* alloc)
 {
     R_ASSERT(alloc != NULL);
 
@@ -196,7 +196,7 @@ RecluseFramework_PUBLIC_API void    operator delete (void* ptr, Recluse::Allocat
 }
 
 template<typename Strategy>
-RecluseFramework_PUBLIC_API void    operator delete[] (void* ptr, Recluse::Allocator<Strategy>* alloc)
+void    operator delete[] (void* ptr, Recluse::Allocator<Strategy>* alloc)
 {
     alloc->free((Recluse::UPtr)ptr);
 }
