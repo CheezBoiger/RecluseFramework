@@ -8,7 +8,7 @@ import sys
 
 import BuildSystem as BS
 
-build_systems_dir = os.path.dirname(os.path.realpath(__file__)) + "/../Systems"
+build_systems_dir = os.path.dirname(os.path.realpath(__file__)) + "/../Build"
 thirdparty_dir = os.path.dirname(os.path.realpath(__file__)) + "../ThirdParty"
 
 recluse_install_dir = os.path.join(build_systems_dir, "../Recluse")

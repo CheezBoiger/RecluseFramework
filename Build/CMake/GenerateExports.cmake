@@ -12,7 +12,7 @@ function(ExportLibraryInternal TARGET_LIBRARY BUILD_PATH)
 	set(EXPORT_DLL_DEFINITION "${TARGET_LIBRARY}_DLL_EXPORT")
 	add_definitions(-D"${EXPORT_DLL_DEFINITION}"=1)
 	target_include_directories(${TARGET_LIBRARY} PUBLIC ${EXPORT_LIBRARY_DIRECTORY})
-	configure_file(${CMAKE_SOURCE_DIR}/Systems/CMake/exports.hpp.in ${EXPORT_LIBRARY_FILE})
+	configure_file(${CMAKE_SOURCE_DIR}/Build/CMake/exports.hpp.in ${EXPORT_LIBRARY_FILE})
 endfunction()
 
 
