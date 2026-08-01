@@ -61,4 +61,23 @@ class CompareEqual : public GenericCompare<T>
 public:
     Bool operator() (const T& lh, const T& rh) const override { return lh == rh; }
 };
+
+
+template<typename IteratorPolicy>
+class Iterator
+{
+public:
+    Iterator& operator++()
+    {
+        return *this;
+    }
+
+    Iterator operator++(int)
+    {
+        Iterator tmp;
+        return tmp;
+    }
+private:
+    IteratorPolicy policy;
+};
 } // Recluse

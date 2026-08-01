@@ -13,6 +13,9 @@ namespace Recluse {
 template<typename T, typename Compare = CompareLess<T>, typename TypeEqual = CompareEqual<T>, typename AllocatorType = MallocAllocator>
 class LinkedList 
 {
+    struct LinkNodeIterator
+    {
+    };
 
     typedef T           Type;
     typedef T*          TypePointer;
@@ -27,25 +30,11 @@ class LinkedList
         Type          data;
     } *PNode;
 
-
-    struct Iterator 
-    {
-        Node* pNext;
-
-        void iterate()
-        { 
-            if (pNext) 
-            {
-                pNext = pNext->pNext;
-            } 
-        }
-    };
-
+    typedef Iterator<LinkNodeIterator> Iterator;
     typedef Iterator*       IteratorPointer;
     typedef Iterator&       IteratorRefrerence;
     typedef const Iterator* ConstantIteratorPointer;
     typedef const Iterator& ConstantIteratorReference;
-
 
 public:
     LinkedList()
@@ -62,9 +51,9 @@ public:
     Iterator*       find(ConstantTypeReference data);
 
 
-    Iterator*       begin();
+    Iterator       begin();
 
-    Iterator*       end();
+    Iterator       end();
 
     SizeT           size() const { return m_totalNodes; }
     Bool            empty() const { return (size() == 0); }
