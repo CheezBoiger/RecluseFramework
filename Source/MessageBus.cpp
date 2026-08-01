@@ -7,9 +7,10 @@
 namespace Recluse {
 
 
-MessageBus::MessageBus()
+MessageBus::MessageBus(const std::string& busName)
     : m_pMessageAllocator(nullptr)
     , m_messageMemPool({})
+    , m_name(busName)
 {
 
 }

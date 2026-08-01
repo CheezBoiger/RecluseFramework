@@ -69,7 +69,7 @@ public:
         pBus->pushEvent<EventClass>(id, args...);
     }
 
-    RecluseFramework_PUBLIC_API MessageBus();
+    RecluseFramework_PUBLIC_API MessageBus(const std::string& busName = "");
 
     ~MessageBus() {} 
 
@@ -108,6 +108,7 @@ public:
     }
 
     Id getId() const { return m_id; }
+    std::string getName() const { return m_name; }
 
 private:
     MutexGuard                      m_messageQueueMutex;
@@ -116,6 +117,7 @@ private:
     std::queue<EventMessage*>       m_messages;             //< The Message queue.
     std::vector<MessageReceiveFunc> m_messageReceivers;
     std::map<std::string, U32>      m_receiverNodeNames;
+    std::string                     m_name;
 
     // Message bus id.
     Id                              m_id;
