@@ -34,7 +34,7 @@ add_library (               ${RECLUSE_FRAMEWORK_NAME} SHARED    ${RECLUSE_FRAMEW
 target_include_directories( ${RECLUSE_FRAMEWORK_NAME} PUBLIC    ${RECLUSE_FRAMEWORK_INCLUDE_FILES} ${RECLUSE_FRAMEWORK_SOURCE} ${RECLUSE_FRAMEWORK_THIRD_PARTY})
 target_link_libraries (     ${RECLUSE_FRAMEWORK_NAME}           ${RECLUSE_FRAMEWORK_LINK_BINARIES} )
 
-ExportThisLibrary(${RECLUSE_FRAMEWORK_NAME})
+ExportThisLibrary(${RECLUSE_FRAMEWORK_NAME} ${CMAKE_SOURCE_DIR}/Recluse/Build/Libraries)
 
 # Doing some stuff for organization.
 if (MSVC)

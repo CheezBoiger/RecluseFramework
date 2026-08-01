@@ -9,6 +9,8 @@ set(TEST_FILES )
 set(TEST_FILES ${TEST_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/Memory/MemoryTest.cpp)
 set(TEST_INCLUDES ${CMAKE_SOURCE_DIR}/Include)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/../Systems/CMake/GenerateExports.cmake)
+
 # Grab the gtest system.
 include(FetchContent)
 
@@ -22,5 +24,15 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(${RECLUSE_FRAMEWORK_TEST_NAME} ${TEST_FILES})
 
+ImportThisLibrary(${RECLUSE_FRAMEWORK_TEST_NAME} RecluseFramework ${CMAKE_SOURCE_DIR}/Recluse/Build/Libraries)
+
 target_link_libraries(${RECLUSE_FRAMEWORK_TEST_NAME} PRIVATE gtest_main RecluseFramework)
 target_include_directories(${RECLUSE_FRAMEWORK_TEST_NAME} PRIVATE ${TEST_INCLUDES})
+
+# Copy all runtime DLLs required by MyApp to its output directory after building
+add_custom_command(TARGET ${RECLUSE_FRAMEWORK_TEST_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_RUNTIME_DLLS:${RECLUSE_FRAMEWORK_TEST_NAME}>
+        $<TARGET_FILE_DIR:${RECLUSE_FRAMEWORK_TEST_NAME}>
+    COMMAND_EXPAND_LISTS
+)
