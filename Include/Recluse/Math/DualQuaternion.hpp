@@ -1,7 +1,7 @@
 //
 #pragma once
 
-#include "Recluse/Math/Quaternion.hpp"
+#include <Recluse/Math/Quaternion.hpp>
 
 #include "RecluseFramework_exports.hpp"
 

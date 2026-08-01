@@ -1,10 +1,10 @@
 //
 #pragma once
 
-#include "Recluse/Math/MathCommons.hpp"
-#include "Recluse/Types.hpp"
+#include <Recluse/Math/MathCommons.hpp>
+#include <Recluse/Types.hpp>
 
-#include "Recluse/Math/Vector2.hpp"
+#include <Recluse/Math/Vector2.hpp>
 
 #include "RecluseFramework_exports.hpp"
 

@@ -1,10 +1,11 @@
 //
 #pragma once
 
-#include "Recluse/Logger.hpp"
-#include "Recluse/Arch.hpp"
-#include "Recluse/Serialization/Hasher.hpp"
-#include "Recluse/System/DateTime.hpp"
+#include <Recluse/Logger.hpp>
+#include <Recluse/Arch.hpp>
+#include <Recluse/Serialization/Hasher.hpp>
+#include <Recluse/System/DateTime.hpp>
+
 #include <stdio.h>
 
 // Logging functions.

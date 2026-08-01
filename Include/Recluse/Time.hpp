@@ -1,7 +1,8 @@
 //
 #pragma once
 
-#include "Recluse/Types.hpp"
+#include <Recluse/Types.hpp>
+
 #include "RecluseFramework_exports.hpp"
 
 namespace Recluse {

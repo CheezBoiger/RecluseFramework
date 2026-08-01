@@ -1,11 +1,10 @@
 //
 #pragma once
 
-#include "Recluse/Arch.hpp"
-#include "Recluse/Types.hpp"
-#include "RecluseFramework_exports.hpp"
+#include <Recluse/Arch.hpp>
+#include <Recluse/Types.hpp>
 
-#include <xhash>
+#include "RecluseFramework_exports.hpp"
 
 namespace Recluse {
 

@@ -1,8 +1,8 @@
 //
 #pragma once
 
-#include "Recluse/Math/MathCommons.hpp"
-#include "Recluse/Types.hpp"
+#include <Recluse/Math/MathCommons.hpp>
+#include <Recluse/Types.hpp>
 
 #include "RecluseFramework_exports.hpp"
 

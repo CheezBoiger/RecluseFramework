@@ -1,8 +1,8 @@
 //
 #pragma once
 
-#include "Recluse/Arch.hpp"
-#include "Recluse/Types.hpp"
+#include <Recluse/Arch.hpp>
+#include <Recluse/Types.hpp>
 
 namespace Recluse {
 namespace Process {

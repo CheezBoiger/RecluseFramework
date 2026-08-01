@@ -1,8 +1,9 @@
 //
 #pragma once
 
-#include "Recluse/Types.hpp"
-#include "Recluse/Time.hpp"
+#include <Recluse/Types.hpp>
+#include <Recluse/Time.hpp>
+
 #include <cmath>
 
 

@@ -1,8 +1,8 @@
 //
 #pragma once
 
-#include "Recluse/Filesystem/Filesystem.hpp"
-#include "Recluse/Types.hpp"
+#include <Recluse/Filesystem/Filesystem.hpp>
+#include <Recluse/Types.hpp>
 
 namespace Recluse {
 

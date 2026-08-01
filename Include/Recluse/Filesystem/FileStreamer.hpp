@@ -1,9 +1,9 @@
 // 
 #pragma once
 
-#include "Recluse/Types.hpp"
-#include "Recluse/Namespace.hpp"
-#include "Recluse/Memory/MemoryCommon.hpp"
+#include <Recluse/Types.hpp>
+#include <Recluse/Namespace.hpp>
+#include <Recluse/Memory/MemoryCommon.hpp>
 
 RECLUSE_BEGIN_NAMESPACE
 

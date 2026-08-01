@@ -1,9 +1,9 @@
 //
 #pragma once
 
-#include "Recluse/Types.hpp"
-#include "Recluse/Math/Vector2.hpp"
-#include "Recluse/Math/Ray.hpp"
+#include <Recluse/Types.hpp>
+#include <Recluse/Math/Vector2.hpp>
+#include <Recluse/Math/Ray.hpp>
 
 #include "RecluseFramework_exports.hpp"
 

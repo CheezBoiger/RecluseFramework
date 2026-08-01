@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "Recluse/Types.hpp"
-#include "Recluse/Serialization/Hasher.hpp"
+#include <Recluse/Types.hpp>
+#include <Recluse/Serialization/Hasher.hpp>
+
 #include "RecluseFramework_exports.hpp"
 #include <map>
 

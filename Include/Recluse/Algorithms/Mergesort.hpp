@@ -1,9 +1,9 @@
 //
 #pragma once
 
-#include "Recluse/Types.hpp"
+#include <Recluse/Types.hpp>
 
-#include "Recluse/Algorithms/Common.hpp"
+#include <Recluse/Algorithms/Common.hpp>
 
 namespace Recluse {
 namespace MergeSortInternal { // Internal helpers to run merge sort.

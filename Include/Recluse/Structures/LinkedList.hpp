@@ -1,9 +1,9 @@
 // 
 #pragma once
 
-#include "Recluse/Types.hpp"
-#include "Recluse/Algorithms/Common.hpp"
-#include "Recluse/Memory/Allocator.hpp"
+#include <Recluse/Types.hpp>
+#include <Recluse/Algorithms/Common.hpp>
+#include <Recluse/Memory/Allocator.hpp>
 
 #include <initializer_list>
 

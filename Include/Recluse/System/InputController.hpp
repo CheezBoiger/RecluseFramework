@@ -1,7 +1,7 @@
 //
 #pragma once
 
-#include "Recluse/Types.hpp"
+#include <Recluse/Types.hpp>
 
 namespace Recluse {
 

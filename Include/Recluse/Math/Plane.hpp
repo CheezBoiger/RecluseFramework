@@ -1,8 +1,8 @@
 //
 #pragma once
 
-#include "Recluse/Math/MathCommons.hpp"
-#include "Recluse/Math/Vector4.hpp"
+#include <Recluse/Math/MathCommons.hpp>
+#include <Recluse/Math/Vector4.hpp>
 
 namespace Recluse {
 namespace Math {

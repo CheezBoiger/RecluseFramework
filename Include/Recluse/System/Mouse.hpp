@@ -1,10 +1,11 @@
 //
 #pragma once
 
-#include "Recluse/Types.hpp"
-#include "Recluse/System/Input.hpp"
-#include "Recluse/System/InputController.hpp"
-#include "Recluse/Serialization/SerialTypes.hpp"
+#include <Recluse/Types.hpp>
+#include <Recluse/System/Input.hpp>
+#include <Recluse/System/InputController.hpp>
+#include <Recluse/Serialization/SerialTypes.hpp>
+
 #include "RecluseFramework_exports.hpp"
 
 namespace Recluse {

@@ -1,11 +1,12 @@
 //
 #pragma once
 
-#include "Recluse/Types.hpp"
-#include "Recluse/Arch.hpp"
+#include <Recluse/Types.hpp>
+#include <Recluse/Arch.hpp>
 
-#include "Recluse/Algorithms/Common.hpp"
-#include "Recluse/Utility.hpp"
+#include <Recluse/Algorithms/Common.hpp>
+#include <Recluse/Utility.hpp>
+
 #include <algorithm>
 
 namespace Recluse {

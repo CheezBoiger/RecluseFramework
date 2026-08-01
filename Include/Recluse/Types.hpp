@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "Recluse/Arch.hpp"
-#include "Recluse/Math/half.hpp"
+#include <Recluse/Arch.hpp>
+#include <Recluse/Math/half.hpp>
 #include <string>
 
 namespace Recluse {

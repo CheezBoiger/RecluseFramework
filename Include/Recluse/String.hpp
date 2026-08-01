@@ -4,7 +4,8 @@
 #define RECLUSE_STRING_HPP
 
 #pragma once
-#include "Recluse/Types.hpp"
+#include <Recluse/Types.hpp>
+
 #include "RecluseFramework_exports.hpp"
 
 // Defines the recluse text string that would be ideal for handling unicode formats.

@@ -1,8 +1,8 @@
 //
 #pragma once
 
-#include "Recluse/System/InputController.hpp"
-#include "Recluse/Arch.hpp"
+#include <Recluse/System/InputController.hpp>
+#include <Recluse/Arch.hpp>
 
 #include "RecluseFramework_exports.hpp"
 
