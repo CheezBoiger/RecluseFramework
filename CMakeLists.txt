@@ -6,6 +6,8 @@ include ( ${CMAKE_SOURCE_DIR}/Build/CMake/GenerateExports.cmake )
 
 option(ENABLE_TESTS "Builds Unit tests for the framework" OFF)
 
+set( RECLUSE_THIRD_PARTY_LIBRARY_PATH "" CACHE STRING "Path/to/RecluseLibraries")
+
 set ( RECLUSE_FRAMEWORK_NAME "RecluseFramework" )
 set ( RECLUSE_FRAMEWORK_MINOR 0 )
 set ( RECLUSE_FRAMEWORK_MAJOR 0 )
