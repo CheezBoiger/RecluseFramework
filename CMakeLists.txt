@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 project("RecluseFramework")
 
 include ( ${CMAKE_SOURCE_DIR}/Build/CMake/GenerateExports.cmake )
+set (RECLUSE_FRAMEWORK_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 option(ENABLE_TESTS "Builds Unit tests for the framework" OFF)
 
