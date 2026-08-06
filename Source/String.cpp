@@ -4,11 +4,19 @@
 namespace Recluse {
 
 
+String::String(size_t count) 
+    : m_size(count)
+    , m_cStr(nullptr) 
+{ 
+    if (count) m_cStr = new U8[count]; 
+}
+
+
 String::~String()
 {
     if (m_cStr)
     {
-        delete m_cStr;
+        delete[] m_cStr;
         m_cStr = nullptr;
     }
 

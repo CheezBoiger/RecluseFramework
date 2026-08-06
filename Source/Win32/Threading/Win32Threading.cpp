@@ -198,8 +198,8 @@ I16 compareExchange(I16* dest, I16 ex, I16 comp)
 
 U128 compareExchange(U128* dest, U128 ex, U128 comp)
 {
-    R_NO_IMPL();
-    return U128();
+    BOOLEAN succeeded = InterlockedCompareExchange128(reinterpret_cast<LONG64*>(&dest), ex.m1, ex.m0, reinterpret_cast<LONG64*>(&comp));
+    return succeeded ? comp : U128();
 }
 
 

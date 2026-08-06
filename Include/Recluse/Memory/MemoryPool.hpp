@@ -50,7 +50,8 @@ public:
     // Memory pool allocation construction.
     MemoryPool(U64 szBytes = 0ull, U64 pageSize = 0ull);
 
-    // Memory must be malloc'ed or new'ed. Can not be stack local memory!
+    // Memory Pool to act as a handler to the range. Takes a pointer to the raw memory.
+    // Memory can be malloc'ed or local, but won't be the responsibility of this pool to clean up.
     MemoryPool(void* ptr, U64 szBytes, U64 pagSz = 0ull);
 
     ~MemoryPool();
@@ -78,7 +79,8 @@ public:
     Bool                resize(U64 newSizeBytes, U64 pageSize);
 
     // Clear the pool, wipe out the state and set to default value.
-    // This does not free the pool memory!
+    // This does not free the pool memory! 
+    // \param defaultValue The default value (in a byte) that will be used to fill the memory block.
     void                clear(U32 defaultValue = 0);
 
     // Is exactly clear, just another name for it.
@@ -103,7 +105,12 @@ public:
     static void         freePagedAlignedMalloc(void* ptr);
 
 private:
-    enum { IsMalloc = 1, IsPaged = 2 };
+    enum {
+        // If the allocation done was allocated via malloc. 
+        IsMalloc = 1, 
+        // If the allocation is paged.
+        IsPaged = 2 
+    };
 
     UPtr    m_baseAddr;
     U64     m_totalSzBytes;

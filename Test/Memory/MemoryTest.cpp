@@ -71,3 +71,25 @@ TEST(MemoryTest, LinearScratchMemoryDynamicPaged)
     EXPECT_EQ(900, address[2]);
     EXPECT_EQ(1030, address[3]);
 }
+
+TEST(MemoryTest, MemoryPoolClearDefault)
+{
+    using namespace Recluse;
+    char data[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    {
+        MemoryArena arena((void*)data, 10 * sizeof(char));
+        arena.clear(0xF);
+    }
+
+    EXPECT_EQ(data[0], 0xF);
+    EXPECT_EQ(data[1], 0xF);
+
+    {
+        MemoryArena arena((void*)data, 10 * sizeof(char));
+        char* ptr = (char*)arena.getBaseAddress();
+        *ptr = 1;
+    }
+
+    EXPECT_EQ(data[0], 1);
+    EXPECT_EQ(data[9], 0xF);
+}

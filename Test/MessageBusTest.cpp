@@ -4,6 +4,9 @@
 
 #include <Recluse/MessageBus.hpp>
 
+#include <Recluse/System/Window.hpp>
+#include <Recluse/System/Input.hpp>
+
 class TestEvent : public Recluse::EventMessage
 {
 public:
@@ -39,4 +42,33 @@ TEST(MessageBusTest, NotifyAll)
     testMessageBus.notifyAll();
 
     testMessageBus.cleanUp();
+}
+
+TEST(WindowTest, CreateWindowSimpleWindowBorderless)
+{
+    Recluse::Window* window = Recluse::Window::create("Test", 0, 0, 128, 128, Recluse::ScreenMode_WindowBorderless);
+    
+    window->show();
+
+    Recluse::U32 i = 0;
+    
+    while (!window->shouldClose())
+    {
+        Recluse::pollEvents();
+        ++i;
+        
+        EXPECT_EQ(window->getScreenMode(), Recluse::ScreenMode_WindowBorderless);
+        EXPECT_EQ(window->getPosX(), 0);
+        EXPECT_EQ(window->getPosY(), 0);
+        EXPECT_EQ(window->getWidth(), 128);
+        EXPECT_EQ(window->getWidth(), 128);
+
+        if (i == 100)
+        {
+            window->close();
+
+            EXPECT_EQ(window->shouldClose(), true);
+        }
+    }
+    Recluse::Window::destroy(window);
 }

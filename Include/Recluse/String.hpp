@@ -19,7 +19,7 @@ namespace Recluse {
 class RecluseFramework_PUBLIC_API String 
 {
 public:
-    String() : m_size(0), m_cStr(nullptr) { }
+    String(size_t count = 0);
     String(String&& other);
     String(const String& other);
     String(const U8* other);
@@ -35,6 +35,9 @@ public:
 
     void operator+=(const String& other);
     void operator+=(const U8* other);
+
+    char& operator[](const size_t idx) { return reinterpret_cast<char&>(m_cStr[idx]); }
+    const char& operator[](const size_t idx) const { return reinterpret_cast<const char&>(m_cStr[idx]); }
 
     const U8* raw() const { return m_cStr; }
     U8* raw() { return m_cStr; }

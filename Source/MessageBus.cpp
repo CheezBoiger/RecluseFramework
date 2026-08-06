@@ -12,7 +12,6 @@ MessageBus::MessageBus(const std::string& busName)
     , m_messageMemPool({})
     , m_name(busName)
 {
-
 }
 
 
@@ -21,7 +20,7 @@ void MessageBus::initialize(SizeT eventCacheSzBytes)
     static U32 idCount = 0;
     // Pre-allocate a sizeable pool. Include room for our allocator!
     m_messageMemPool.preAllocate(eventCacheSzBytes + sizeof(LinearAllocator));
-
+    
     // We will allocate our allocator into the pool too!
     m_pMessageAllocator = new (reinterpret_cast<void*>(m_messageMemPool.getBaseAddress())) LinearAllocator();
     m_pMessageAllocator->initialize

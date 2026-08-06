@@ -8,6 +8,8 @@
 namespace Recluse {
 
 
+// Quick scratch memory allocator, uses the linear allocation strategy to 
+// suballocate quick blocks for user compute.
 template<U32 sizeBytes, Bool dynamic = false, U32 pageSz = 0ull>
 class LinearScratchMemory
 {
@@ -23,10 +25,14 @@ public:
         destroy();
     }
 
+    // Allocate and cast to Type. 
+    // \param arrayCount The number of Type objects to allocate as an array. 1 is default. Should not be 0.
     template<typename Type>
     Type* allocate(U32 arrayCount = 1u)
     {
-        R_ASSERT(arrayCount > 0);
+        R_ASSERT_FORMAT(arrayCount > 0, "Incorrect size passed to allocate.");
+        if (arrayCount == 0) return nullptr;
+
         if constexpr (dynamic)
         {
             Type* ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, pointerSizeBytes());
