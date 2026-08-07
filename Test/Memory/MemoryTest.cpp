@@ -33,12 +33,16 @@ TEST(MemoryTest, LinearScratchMemoryDynamic)
     LinearScratchMemory<8, true> alloc;
 
     U64* c0 = alloc.allocate<U64>();
+    ASSERT_NE(c0, nullptr);
     *c0 = 42;
     U64* c1 = alloc.allocate<U64>();
+    ASSERT_NE(c1, nullptr);
     *c1 = 35;
     U64* c2 = alloc.allocate<U64>();
+    ASSERT_NE(c2, nullptr);
     *c2 = 900;
     U64* c3 = alloc.allocate<U64>();
+    ASSERT_NE(c3, nullptr);
     *c3 = 1030;
 
     U64* address = (U64*)alloc.getBaseAddress();

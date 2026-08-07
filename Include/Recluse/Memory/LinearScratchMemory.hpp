@@ -32,10 +32,9 @@ public:
     {
         R_ASSERT_FORMAT(arrayCount > 0, "Incorrect size passed to allocate.");
         if (arrayCount == 0) return nullptr;
-
+        Type* ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, pointerSizeBytes());
         if constexpr (dynamic)
         {
-            Type* ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, pointerSizeBytes());
             if (allocator->getLastError() == RecluseResult_OutOfMemory)
             {
                 // Resize with double to original, plus the requested size.
@@ -45,10 +44,8 @@ public:
                 if (result == RecluseResult_Ok)
                     ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, pointerSizeBytes());
             }
-            return ptr;
         }
-        else
-            return (Type*)allocator->allocate(sizeof(Type) * arrayCount, pointerSizeBytes());
+        return ptr;
     }
 
     void free(void* ptr)
