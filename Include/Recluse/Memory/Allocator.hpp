@@ -177,7 +177,7 @@ template<typename Strategy>
 void* operator new[] (size_t bytes, Recluse::Allocator<Strategy>* alloc)
 {
     R_ASSERT(alloc != NULL);
-    return (void*)alloc->allocate(sizeBytes, Recluse::pointerSizeBytes());
+    return (void*)alloc->allocate(bytes, Recluse::pointerSizeBytes());
 }
 
 // Operator overload for deleting allocated pointers.

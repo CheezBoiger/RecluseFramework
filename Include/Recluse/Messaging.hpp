@@ -12,19 +12,19 @@
 #define R_LOG(chan, logType, format, ...) \
     { \
         Recluse::Log r__log__(logType, chan); \
-        Recluse::SizeT r__sz__ = snprintf(nullptr, 0, format, __VA_ARGS__); \
+        Recluse::SizeT r__sz__ = snprintf(nullptr, 0, format, ##__VA_ARGS__); \
         r__log__.data.msg.resize(r__sz__ + 1u); \
-        snprintf((char*)r__log__.data.msg.data(), r__log__.data.msg.size(), format, __VA_ARGS__); \
+        snprintf((char*)r__log__.data.msg.data(), r__log__.data.msg.size(), format, ##__VA_ARGS__); \
         r__log__ << Recluse::DateFormatter("%Y-%M-%D %h:%m:%s"); \
     }
 
 // Helper macros for logging messages.
-#define R_INFO(chan, format, ...)       do { R_LOG(chan, Recluse::LogType_Info, format, __VA_ARGS__);    } while (false)
-#define R_WARN(chan, format, ...)       do { R_LOG(chan, Recluse::LogType_Warn, format, __VA_ARGS__);    } while (false)
-#define R_VERBOSE(chan, format, ...)    do { R_LOG(chan, Recluse::LogType_Verbose, format, __VA_ARGS__); } while (false)
-#define R_TRACE(chan, format, ...)      do { R_LOG(chan, Recluse::LogType_Trace, format, __VA_ARGS__);   } while (false)
-#define R_NOTIFY(chan, format, ...)     do { R_LOG(chan, Recluse::LogType_Notify, format, __VA_ARGS__);  } while (false)
-#define R_DEBUG(chan, str, ...)         do { R_LOG(chan, Recluse::LogType_Debug, str, __VA_ARGS__);      } while (false)
+#define R_INFO(chan, format, ...)       do { R_LOG(chan, Recluse::LogType_Info, format, ##__VA_ARGS__);    } while (false)
+#define R_WARN(chan, format, ...)       do { R_LOG(chan, Recluse::LogType_Warn, format, ##__VA_ARGS__);    } while (false)
+#define R_VERBOSE(chan, format, ...)    do { R_LOG(chan, Recluse::LogType_Verbose, format, ##__VA_ARGS__); } while (false)
+#define R_TRACE(chan, format, ...)      do { R_LOG(chan, Recluse::LogType_Trace, format, ##__VA_ARGS__);   } while (false)
+#define R_NOTIFY(chan, format, ...)     do { R_LOG(chan, Recluse::LogType_Notify, format, ##__VA_ARGS__);  } while (false)
+#define R_DEBUG(chan, str, ...)         do { R_LOG(chan, Recluse::LogType_Debug, str, ##__VA_ARGS__);      } while (false)
  
 #if defined(RECLUSE_DEBUG) || defined(RECLUSE_DEVELOPER)
     namespace Recluse {

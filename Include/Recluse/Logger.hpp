@@ -7,7 +7,7 @@
 
 #include <chrono>
 #include <vector>
-#include <varargs.h>
+#include <stdarg.h>
 
 namespace Recluse {
     
@@ -90,13 +90,6 @@ public:
         return (*this);
     }
 
-    template<>
-    Log& operator<<(const std::string& data) 
-    {
-        this->data.msg += data;
-        return (*this);
-    }
-
     Log& operator<<(const char* data)
     {
         this->data.msg += data;
@@ -110,64 +103,39 @@ public:
         this->data.msg += arg;
     }
 
-    template<>
-    void append(const char* data) 
-    {
-        this->data.msg += data;
-    }
 
-    template<>
-    Log& operator<<(const Math::Float2& f2)
-    {
-        stringify(f2);
-        return (*this);
-    }
-
-    template<>
-    Log& operator<<(const Math::Float3& f3)
-    {
-        stringify(f3);
-        return (*this);
-    }
-
-    template<>
-    Log& operator<<(const Math::Float4& f4)
-    {
-        stringify(f4);
-        return (*this);
-    }
-
-    template<>
-    Log& operator<<(const Math::Matrix22& m22)
-    {
-        stringify(m22);
-        return (*this);
-    }
-
-    template<>
-    Log& operator<<(const Math::Matrix33& m33)
-    {
-        stringify(m33);
-        return (*this);
-    }
-
-    template<>
-    Log& operator<<(const Math::Matrix44& m44)
-    {
-        stringify(m44);
-        return (*this);
-    }
-
-    template<>
-    Log& operator<<(const Math::Matrix43& m43)
-    {
-        stringify(m43);
-        return (*this);
-    }
 
     RecluseFramework_PUBLIC_API Log& operator<<(const DateFormatter& formatter);
     RecluseFramework_PUBLIC_API Log& operator<<(LogCommand command);
 };
+
+
+template<>
+void Log::append(const char* data);
+
+template<>
+Log& Log::operator<<(const Math::Float2& f2);
+
+template<>
+Log& Log::operator<<(const Math::Float3& f3);
+
+template<>
+Log& Log::operator<<(const Math::Float4& f4);
+
+template<>
+Log& Log::operator<<(const Math::Matrix22& m22);
+
+template<>
+Log& Log::operator<<(const Math::Matrix33& m33);
+
+template<>
+Log& Log::operator<<(const Math::Matrix44& m44);
+
+template<>
+Log& Log::operator<<(const Math::Matrix43& m43);
+
+template<>
+Log& Log::operator<<(const std::string& data);
 
 
 struct LogChannelConfig

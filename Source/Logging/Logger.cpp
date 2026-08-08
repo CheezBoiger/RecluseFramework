@@ -1,11 +1,11 @@
 // 
-#include "Recluse/Logger.hpp"
-#include "Recluse/Messaging.hpp"
-#include "Recluse/Memory/MemoryCommon.hpp"
-#include "Logging/LogFramework.hpp"
-#include "Recluse/Utility.hpp"
+#include <Recluse/Logger.hpp>
+#include <Recluse/Messaging.hpp>
+#include <Recluse/Memory/MemoryCommon.hpp>
+#include <Logging/LogFramework.hpp>
+#include <Recluse/Utility.hpp>
 
-#include "Recluse/Filesystem/Archive.hpp"
+#include <Recluse/Filesystem/Archive.hpp>
 
 #include <set>
 
@@ -301,7 +301,7 @@ void initializeLoggingSystem(U32 messageCacheCount)
 {
     if (!loggingQueue) 
     {
-        loggingQueue = rlsMalloc<LoggingQueue>(sizeof(LoggingQueue));
+        loggingQueue = rlsMalloc<LoggingQueue>();
         loggingQueue->initialize(static_cast<U32>(messageCacheCount));
     }
 

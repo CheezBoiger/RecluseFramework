@@ -77,6 +77,9 @@ typedef U64 SizeT;
 typedef U32 UPtr;
 typedef U32 SizeT;
 #endif
+#elif defined(RECLUSE_LINUX)
+typedef size_t UPtr;
+typedef size_t SizeT;
 #endif
 
 typedef SizeT sizet;

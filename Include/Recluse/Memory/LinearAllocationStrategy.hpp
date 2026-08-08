@@ -63,7 +63,7 @@ public:
 
     ResultCode onFree(Allocator<LinearStrategy>* super, Allocation* pOutput)
     {
-        R_ASSERT(false, "Linear allocator doesn't allow freeing!");
+        R_ASSERT_FORMAT(false, "Linear allocator doesn't allow freeing!");
         return RecluseResult_NoImpl;
     }
 
@@ -73,7 +73,7 @@ public:
         UPtr offset = m_top - super->getBaseAddress();
 
         // Should be the minimum between these two, especially if the new size is now smaller.
-        offset = Math::minimum(offset, sizeBytes);
+        offset = Math::minimum((U64)offset, sizeBytes);
 
         m_top = newAddress + offset;
         return RecluseResult_Ok;

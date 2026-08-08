@@ -1,9 +1,9 @@
 //
 #pragma once
 
-#include "Recluse/Types.hpp"
+#include <Recluse/Types.hpp>
 
-#include "Recluse/Memory/Allocator.hpp"
+#include <Recluse/Memory/Allocator.hpp>
 
 #include <vector>
 #include <map>

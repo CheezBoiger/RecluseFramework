@@ -1,7 +1,8 @@
 //
 #pragma once
 
-#include "Recluse/Arch.hpp"
+#include <Recluse/Arch.hpp>
+#include <Recluse/Types.hpp>
 
 #include <memory>
 

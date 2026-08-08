@@ -63,7 +63,7 @@ public:
 
     U32 getTotalAllocations() const 
     {
-        return allocator->getTotalAllocations();
+        return 0;
     }
 
     UPtr getBaseAddress() const

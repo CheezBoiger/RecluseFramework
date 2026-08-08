@@ -54,17 +54,16 @@
     #define FE_INVALID   _SW_INVALID       // _EM_INVALID     0x00000010 invalid
     #endif
 #elif defined(__linux__)
-    #error "Linux currently not supported for Recluse!"
-    #define RECLUSE_LINUX
-    #define R_EXPORT_API
-    #define R_IMPORT_API
-    #define R_FORCE_INLINE 
+    #define RECLUSE_LINUX 1
+    #define R_EXPORT_API __attribute__((visibility("default")))
+    #define R_IMPORT_API __attribute__((visibility("default")))
+    #define R_FORCE_INLINE __attribute__((always_inline))
     #define R_NOVTABLE
-    #define R_DEBUG_BREAK()
-    #define R_FORCE_CRASH(c)
-    #define R_FORCE_CRASH_UNSAFE()
-    #define R_LIKELY(exp)
-    #define R_UNLIKELY(exp)
+    #define R_DEBUG_BREAK() __builtin_trap()
+    #define R_FORCE_CRASH(c) __builtin_trap()
+    #define R_FORCE_CRASH_UNSAFE() __builtin_trap()
+    #define R_LIKELY(exp) __attribute__((assume((exp))))
+    #define R_UNLIKELY(exp) __attribute__((assume(!(exp))))
     #define R_VECTORCALL
     #define R_FASTCALL 
     #define R_CDECL 

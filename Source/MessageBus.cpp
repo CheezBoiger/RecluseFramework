@@ -78,7 +78,7 @@ void MessageBus::notifyOne(const std::string& nodeName)
 
 void MessageBus::notifyAll()
 {
-    R_ASSERT(m_messageMemPool.isAllocated(), "This message bus was not initialized.");
+    R_ASSERT_FORMAT(m_messageMemPool.isAllocated(), "This message bus was not initialized.");
     // Notify all message receivers.
     while (!m_messages.empty()) 
     {

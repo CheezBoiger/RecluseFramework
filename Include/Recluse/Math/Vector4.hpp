@@ -51,10 +51,6 @@ struct RecluseFramework_PUBLIC_API Float4
     inline Float4(Type x = static_cast<Type>(0), Type y = static_cast<Type>(0), Type z = static_cast<Type>(0), Type w = static_cast<Type>(0))
         : x(static_cast<F32>(x)), y(static_cast<F32>(y)), z(static_cast<F32>(z)), w(static_cast<F32>(w)) { }
 
-    template<>
-    inline Float4(F32 x, F32 y, F32 z, F32 w)
-        : x(x), y(y), z(z), w(w) { }
-
     inline Float4(const Float3& xyz, F32 w = 0.f)
         : x(xyz.x), y(xyz.y), z(xyz.z), w(w) { }
     inline Float4(const Float2& xy, const Float2& zw)
@@ -143,7 +139,7 @@ struct RecluseFramework_PUBLIC_API Int4
     union
     {
         struct { I32 x, y, z, w; };
-        struct { I32 s, t, r, q; };
+        struct { I32 s, t, d, q; };
         struct { I32 r, g, b, a; };
     };
 
@@ -207,7 +203,7 @@ struct RecluseFramework_PUBLIC_API Byte4
     union
     {
         struct { I8 x, y, z, w; };
-        struct { I8 s, t, r, q; };
+        struct { I8 s, t, d, q; };
         struct { I8 r, g, b, a; };
     };
 
@@ -227,6 +223,11 @@ struct RecluseFramework_PUBLIC_API Byte4
     inline I8& operator[](U32 idx) { return (&x)[idx]; }
     inline I8 operator[](U32 idx) const { return (&x)[idx]; }
 };
+
+
+template<>
+inline Float4::Float4(F32 x, F32 y, F32 z, F32 w)
+    : x(x), y(y), z(z), w(w) { }
 
 
 typedef UByte4 Color4;

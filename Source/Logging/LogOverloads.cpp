@@ -18,6 +18,69 @@ namespace Recluse {
 const char* DateFormatter::kDefaultFormat = "%Y-%M-%D %h:%m:%s";
 
 
+template<>
+void Log::append(const char* data)
+{
+    this->data.msg += data;
+}
+
+template<>
+Log& Log::operator<<(const Math::Float2& f2)
+{
+    stringify(f2);
+    return (*this);
+}
+
+template<>
+Log& Log::operator<<(const Math::Float3& f3)
+{
+    stringify(f3);
+    return (*this);
+}
+
+template<>
+Log& Log::operator<<(const Math::Float4& f4)
+{
+    stringify(f4);
+    return (*this);
+}
+
+template<>
+Log& Log::operator<<(const Math::Matrix22& m22)
+{
+    stringify(m22);
+    return (*this);
+}
+
+template<>
+Log& Log::operator<<(const Math::Matrix33& m33)
+{
+    stringify(m33);
+    return (*this);
+}
+
+template<>
+Log& Log::operator<<(const Math::Matrix44& m44)
+{
+    stringify(m44);
+    return (*this);
+}
+
+template<>
+Log& Log::operator<<(const Math::Matrix43& m43)
+{
+    stringify(m43);
+    return (*this);
+}
+
+template<>
+Log& Log::operator<<(const std::string& data) 
+{
+    this->data.msg += data;
+    return (*this);
+}
+
+
 Log& Log::operator<<(const DateFormatter& formatter)
 {
     data.time = formatter.getFormattedString();

@@ -1,9 +1,8 @@
 //
 #pragma once
 
-#include <Recluse/Types.hpp>
-#include <Recluse/Time.hpp>
-
+#include "Recluse/Types.hpp"
+#include "Recluse/Time.hpp"
 #include <cmath>
 
 
@@ -22,7 +21,7 @@ public:
         F32 counterMs = 0.f;
 
         // If we request 0 or less, we just return the current delta.
-        if (desiredMs <= 0.f || isinf(desiredMs))
+        if (desiredMs <= 0.f || std::isinf(desiredMs))
         {
             return RealtimeTick::getTick(watchType).delta();
         }
