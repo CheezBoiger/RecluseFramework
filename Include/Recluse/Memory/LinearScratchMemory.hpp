@@ -10,6 +10,9 @@ namespace Recluse {
 
 // Quick scratch memory allocator, uses the linear allocation strategy to 
 // suballocate quick blocks for user compute.
+// sizeBytes is the current max size of the memory heap to allocate from.
+// dynamic is whether the memory heap can resize, or reallocate more memory if out.
+// pageSz is the page size, for paged memory heap allocations. Usually, should be 0, unless a massive heap is needed.
 template<U32 sizeBytes, Bool dynamic = false, U32 pageSz = 0ull>
 class LinearScratchMemory
 {
