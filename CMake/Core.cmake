@@ -59,6 +59,15 @@ if (WIN32)
     )
 endif()
 
+if (UNIX)
+    set ( RECLUSE_LINUX ${RECLUSE_CORE_SOURCE}/Linux)
+    set ( RECLUSE_LINUX_THREADING ${RECLUSE_LINUX}/Threading)
+    set ( RECLUSE_CORE_SOURCE_SYSTEM 
+        ${RECLUSE_LINUX_THREADING}/Threads.cpp
+        ${RECLUSE_LINUX}/LinuxLibraryLoader.cpp
+    )
+endif()
+
 set ( RECLUSE_CORE_BUILD 
     ${RECLUSE_CORE_SOURCE_SYSTEM}
 	${RECLUSE_CORE_INCLUDE_STRUCTURES}/BVH.hpp

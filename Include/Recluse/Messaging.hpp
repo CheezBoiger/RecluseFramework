@@ -146,7 +146,7 @@
     // the user, this is entirely ignored.
     #define R_NO_IMPL() R_ASSERT_FORMAT(false, "No implementation for %s", __FUNCTION__)
 #else
-    #define R_ERROR(chan, format, ...) do { R_LOG(chan, Recluse::LogType_Error, format, __VA_ARGS__); } while (false)
-    #define R_FATAL_ERROR(chan, format, ...) do { R_LOG(chan, Recluse::LogType_Fatal, format, __VA_ARGS__); } while (false)
+    #define R_ERROR(chan, format, ...) do { R_LOG(chan, Recluse::LogType_Error, format, ##__VA_ARGS__); } while (false)
+    #define R_FATAL_ERROR(chan, format, ...) do { R_LOG(chan, Recluse::LogType_Fatal, format, ##__VA_ARGS__); } while (false)
     #define R_NO_IMPL()
 #endif
