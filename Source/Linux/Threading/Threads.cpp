@@ -70,6 +70,35 @@ Mutex createMutex(const char* name)
     return reinterpret_cast<Mutex>(native_mutex);
 }
 
+
+ResultCode joinThread(Thread* thread)
+{
+    if (!thread) return RecluseResult_InvalidArgs;
+
+    intptr_t argo = 0;
+
+    int err = pthread_join((pthread_t)thread->handle, (void**)&argo);
+
+    if (err != 0)
+        return RecluseResult_Failed;
+
+    return static_cast<ResultCode>(argo);
+}
+
+
+ResultCode detachThread(Thread* thread)
+{
+    if (!thread) return RecluseResult_InvalidArgs;
+
+    int err = pthread_detach(reinterpret_cast<pthread_t>(thread->handle));
+
+    if (err != 0)
+        return RecluseResult_Failed;
+
+    return RecluseResult_Ok;
+}
+
+
 ResultCode destroyMutex(Mutex mutex)
 {
     if (!mutex) return RecluseResult_InvalidArgs;
@@ -80,6 +109,35 @@ ResultCode destroyMutex(Mutex mutex)
     // Free the mutex that was allocated on the heap.
     free(native_mutex);
     
+    return RecluseResult_Ok;
+}
+
+
+U64 getCurrentThreadId()
+{
+    pthread_t thread_id = pthread_self();
+    return (U64)thread_id;
+}
+
+
+ResultCode lockMutex(Mutex mutex, U64 waitMs)
+{
+    int err = pthread_mutex_lock((pthread_mutex_t*)mutex);
+
+    if (err != 0)
+        return RecluseResult_Timeout;
+
+    return RecluseResult_Ok;
+}
+
+
+ResultCode unlockMutex(Mutex mutex)
+{
+    int err = pthread_mutex_unlock((pthread_mutex_t*)mutex);
+
+    if (err != 0)
+        return RecluseResult_Failed;
+
     return RecluseResult_Ok;
 }
 } // Recluse
