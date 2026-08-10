@@ -53,6 +53,25 @@ TEST(MemoryTest, LinearScratchMemoryDynamic)
     EXPECT_EQ(1030, address[3]);
 }
 
+TEST(MemoryTest, LinearScratchMemoryDynamicHuge)
+{
+    using namespace Recluse;
+    LinearScratchMemory<8, true> alloc;
+
+    for (u32 i = 0; i < 1000; ++i)
+    {
+        U64* ptr = alloc.allocate<U64>();
+        ASSERT_NE(ptr, nullptr);
+        *ptr = i;
+    }
+
+    U64* array = (U64*)alloc.getBaseAddress();
+    for (u32 i = 0; i < 1000; ++i)
+    {
+        EXPECT_EQ(array[i], i);
+    }
+}
+
 TEST(MemoryTest, LinearScratchMemoryDynamicPaged)
 {
     using namespace Recluse;
