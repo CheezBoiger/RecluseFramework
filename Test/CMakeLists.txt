@@ -7,7 +7,8 @@ set(RECLUSE_FRAMEWORK_TEST_NAME "RecluseFrameworkTest")
 set(TEST_FILES )
 
 set(TEST_FILES ${TEST_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/Memory/MemoryTest.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/MessageBusTest.cpp)
+	${CMAKE_CURRENT_SOURCE_DIR}/MessageBusTest.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/System/Task.cpp)
 set(TEST_INCLUDES ${CMAKE_SOURCE_DIR}/Include)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../Build/CMake/GenerateExports.cmake)
