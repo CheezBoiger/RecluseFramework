@@ -43,3 +43,47 @@ TEST(Task, ThreadsSimple)
         EXPECT_EQ(i, databuf[i]);
     }
 }
+
+struct Param1
+{
+    uint* val;
+    Mutex mut;
+    U64 mainThreadId;
+};
+
+static ResultCode countThreadFun(void* args)
+{
+    Param1* param = reinterpret_cast<Param1*>(args);
+    EXPECT_NE(getCurrentThreadId(), param->mainThreadId);
+    if (lockMutex(param->mut) == RecluseResult_Ok)
+    {
+        ++(*param->val);
+        unlockMutex(param->mut);
+    }
+    return RecluseResult_Ok;
+}
+
+TEST(Task, MutexCounter)
+{
+    Thread threads[4];
+    Mutex mutex = createMutex("SimpleMutexDoesNotNeedName");
+    uint result = 0;
+
+    Param1 param;
+    param.mut = mutex;
+    param.val = &result;
+    param.mainThreadId = getCurrentThreadId();
+
+    for (uint i = 0; i < 4; ++i)
+    {
+        threads[i].payload = &param; 
+        createThread(&threads[i], countThreadFun); 
+    }
+
+    for (uint i = 0; i < 4; ++i)
+        joinThread(&threads[i]);
+
+    destroyMutex(mutex);
+
+    EXPECT_EQ(result, 4);
+}

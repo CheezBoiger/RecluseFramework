@@ -133,11 +133,18 @@ ResultCode lockMutex(Mutex mutex, U64 waitMs)
         case WAIT_OBJECT_0:
             return RecluseResult_Ok;
 
-        case WAIT_ABANDONED:
+        case WAIT_ABANDONED: // The mutex was locked by another thread, but terminated without releasing it. Ownership is now given to us.
+            return RecluseResult_Ok;
 
         case WAIT_TIMEOUT:
+            return RecluseResult_Timeout;
+
+        case WAIT_FAILED: 
 
         default: 
+            
+            DWORD lastError = GetLastError();
+            lastError;
             return RecluseResult_Failed;
     }
 
