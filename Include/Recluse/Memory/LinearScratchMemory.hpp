@@ -32,11 +32,11 @@ public:
     // Allocate and cast to Type. 
     // \param arrayCount The number of Type objects to allocate as an array. 1 is default. Should not be 0.
     template<typename Type>
-    Type* allocate(U32 arrayCount = 1u)
+    Type* allocate(U32 arrayCount = 1u, U16 alignment = 0u)
     {
         R_ASSERT_FORMAT(arrayCount > 0, "Incorrect size passed to allocate.");
         if (arrayCount == 0) return nullptr;
-        Type* ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, pointerSizeBytes());
+        Type* ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, alignment);
         if constexpr (dynamic)
         {
             if (allocator->getLastError() == RecluseResult_OutOfMemory)
@@ -46,13 +46,13 @@ public:
                 allocator = (LinearAllocator*)memArena.getBaseAddress();
                 ResultCode result = allocator->rebase(memArena.getPtrAddressAt(sizeof(LinearAllocator)), memArena.getTotalSizeBytes() - sizeof(LinearAllocator));
                 if (result == RecluseResult_Ok)
-                    ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, pointerSizeBytes());
+                    ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, alignment);
             }
         }
         return ptr;
     }
 
-    void* allocateRaw(UPtr sizeBytes, U32 alignment)
+    void* allocateRaw(UPtr sizeBytes, U16 alignment = 1u)
     {
         R_ASSERT(alignment > 0 && sizeBytes > 0);
         void* ptr = (void*)allocator->allocate(sizeBytes, alignment);
