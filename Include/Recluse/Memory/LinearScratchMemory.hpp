@@ -52,6 +52,25 @@ public:
         return ptr;
     }
 
+    void* allocateRaw(UPtr sizeBytes, U32 alignment)
+    {
+        R_ASSERT(alignment > 0 && sizeBytes > 0);
+        void* ptr = (void*)allocator->allocate(sizeBytes, alignment);
+        if constexpr (dynamic)
+        {
+            if (allocator->getLastError() == RecluseResult_OutOfMemory)
+            {
+                // Resize with double to original, plus the requested size.
+                memArena.resize(memArena.getTotalSizeBytes() * 2 + sizeBytes, memArena.getPageSizeBytes());
+                allocator = (LinearAllocator*)memArena.getBaseAddress();
+                ResultCode result = allocator->rebase(memArena.getPtrAddressAt(sizeof(LinearAllocator)), memArena.getTotalSizeBytes() - sizeof(LinearAllocator));
+                if (result == RecluseResult_Ok)
+                    ptr = (void*)allocator->allocate(sizeBytes, alignment);
+            }
+        }
+        return ptr;
+    }
+
     void free(void* ptr)
     {
         allocator->free((UPtr)ptr);
