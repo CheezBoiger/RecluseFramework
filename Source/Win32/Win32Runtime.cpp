@@ -545,6 +545,25 @@ DllLoader::~DllLoader()
 }
 
 
+DllLoader::DllLoader(DllLoader&& loader)
+{
+    library = loader.library;
+    name = loader.name;
+    loader.library = nullptr;
+    loader.name = "";
+}
+
+
+DllLoader& DllLoader::operator=(DllLoader&& other) noexcept
+{
+    library = other.library;
+    name = other.name;
+    other.library = nullptr;
+    other.name = "";
+    return *this;
+}
+
+
 Bool DllLoader::isLoaded()
 {
     return (library != nullptr);

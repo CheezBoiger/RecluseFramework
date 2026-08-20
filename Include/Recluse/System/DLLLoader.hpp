@@ -17,6 +17,9 @@ public:
     RecluseFramework_PUBLIC_API                 DllLoader(const std::string& dllName = "");
     RecluseFramework_PUBLIC_API                 ~DllLoader();
 
+    RecluseFramework_PUBLIC_API                 DllLoader(DllLoader&& loader);
+    RecluseFramework_PUBLIC_API DllLoader&      operator=(DllLoader&& loader) noexcept;
+
     RecluseFramework_PUBLIC_API Bool            isLoaded();
 
     RecluseFramework_PUBLIC_API Bool            load(const std::string& dllName);
