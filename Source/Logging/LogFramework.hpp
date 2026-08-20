@@ -12,7 +12,7 @@ namespace Recluse {
 
 struct LogNode 
 {
-    struct LogNode* pNext;
+    struct LogNode* pNext       = nullptr;
     LogMessage      logMessage;
 };
 

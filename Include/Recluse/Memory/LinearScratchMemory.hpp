@@ -42,7 +42,7 @@ public:
             if (allocator->getLastError() == RecluseResult_OutOfMemory)
             {
                 // Resize with double to original, plus the requested size.
-                Bool success = resize(memArena.getTotalSizeBytes() * 2 + sizeof(Type) * arrayCount, memArena.getPageSizeBytes());
+                Bool success = resize(static_cast<uint>(memArena.getTotalSizeBytes() * 2 + sizeof(Type)) * arrayCount, static_cast<uint>(memArena.getPageSizeBytes()));
                 if (success)
                     ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, alignment);
             }
@@ -59,7 +59,7 @@ public:
             if (allocator->getLastError() == RecluseResult_OutOfMemory)
             {
                 // Resize with double to original, plus the requested size.
-                Bool success = resize(memArena.getTotalSizeBytes() * 2 + sizeBytes, memArena.getPageSizeBytes());
+                Bool success = resize(static_cast<uint>(memArena.getTotalSizeBytes() * 2 + sizeBytes), static_cast<uint>(memArena.getPageSizeBytes()));
                 if (success)
                     ptr = (void*)allocator->allocate(sizeBytes, alignment);
             }

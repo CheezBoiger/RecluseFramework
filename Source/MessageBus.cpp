@@ -11,6 +11,7 @@ MessageBus::MessageBus(const std::string& busName)
     : m_pMessageAllocator(nullptr)
     , m_messageMemPool({})
     , m_name(busName)
+    , m_id(~0u)
 {
 }
 
@@ -50,7 +51,7 @@ void MessageBus::cleanUp()
 void MessageBus::addReceiver(const std::string& nodeName, MessageReceiveFunc receiver)
 {
     m_messageReceivers.push_back(receiver);
-    m_receiverNodeNames[nodeName] = m_messageReceivers.size() - 1;
+    m_receiverNodeNames[nodeName] = static_cast<i32>(m_messageReceivers.size()) - 1;
 }
 
 

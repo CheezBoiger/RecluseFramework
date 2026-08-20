@@ -66,7 +66,7 @@ ResultCode killThread(Thread* pThread)
 {
     R_STATIC_ASSERT(pThread != NULL);
 
-    R_DEBUG(R_CHANNEL_WIN32, "Killing thread=%d ...", pThread->uid);
+    R_DEBUG(R_CHANNEL_WIN32, "Killing thread=%llu ...", pThread->uid);
 
     TerminateThread(pThread->handle, 0);
 

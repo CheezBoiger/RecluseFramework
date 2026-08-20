@@ -5,7 +5,7 @@ namespace Recluse {
 
 
 String::String(size_t count) 
-    : m_size(count)
+    : m_size(static_cast<uint>(count))
     , m_cStr(nullptr) 
 { 
     if (count) m_cStr = new U8[count]; 

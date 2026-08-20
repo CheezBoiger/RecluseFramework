@@ -116,7 +116,7 @@ private:
     MemoryPool                      m_messageMemPool;
     std::queue<EventMessage*>       m_messages;             //< The Message queue.
     std::vector<MessageReceiveFunc> m_messageReceivers;
-    std::map<std::string, U32>      m_receiverNodeNames;
+    std::map<std::string, i32>      m_receiverNodeNames;
     std::string                     m_name;
 
     // Message bus id.

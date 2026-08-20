@@ -194,13 +194,6 @@ UInt4 UInt4::operator/(const UInt4& rh) const
     return UInt4(x / rh.x, y / rh.y, z / rh.z, w / rh.w);
 }
 
-
-UInt4 UInt4::operator-() const
-{
-    return UInt4(-x, -y, -z, -w);
-}
-
-
 UInt4 UInt4::operator+(U32 scalar) const
 {
     return UInt4(x + scalar, y + scalar, z + scalar, w + scalar);

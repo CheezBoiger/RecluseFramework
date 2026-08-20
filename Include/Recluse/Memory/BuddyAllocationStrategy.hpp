@@ -20,21 +20,21 @@ struct BuddyBlock
 
 // Buddy allocator strategy implementation.
 //
-class RecluseFramework_PUBLIC_API BuddyStrategy
+class BuddyStrategy
 {
 public:
 
     typedef Allocation BlockAllocation;
 
-    BuddyStrategy()
+    RecluseFramework_PUBLIC_API BuddyStrategy()
         : m_maxOrder(0) 
     { }
 
-    ResultCode onInitialize(Allocator<BuddyStrategy>* super);
-    ResultCode onAllocate(Allocator<BuddyStrategy>* super, Allocation* pOutput, U64 requestSz, U16 alignment);
-    ResultCode onFree(Allocator<BuddyStrategy>* super, Allocation* pOutput);
-    ResultCode onReset(Allocator<BuddyStrategy>* super);
-    ResultCode onCleanUp(Allocator<BuddyStrategy>* super);
+    RecluseFramework_PUBLIC_API ResultCode onInitialize(Allocator<BuddyStrategy>* super);
+    RecluseFramework_PUBLIC_API ResultCode onAllocate(Allocator<BuddyStrategy>* super, Allocation* pOutput, U64 requestSz, U16 alignment);
+    RecluseFramework_PUBLIC_API ResultCode onFree(Allocator<BuddyStrategy>* super, Allocation* pOutput);
+    RecluseFramework_PUBLIC_API ResultCode onReset(Allocator<BuddyStrategy>* super);
+    RecluseFramework_PUBLIC_API ResultCode onCleanUp(Allocator<BuddyStrategy>* super);
 
     ResultCode onRebase(Allocator<BuddyStrategy>* super, UPtr newAddress, U64 sizeBytes)
     {

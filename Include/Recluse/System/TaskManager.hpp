@@ -19,33 +19,33 @@ typedef U32 TaskTypeFlags;
 
 // Task manager that runs and schedules tasks based on priority.
 // Uses current thread pool to handle and run certain tasks.
-class RecluseFramework_PUBLIC_API TaskManager
+class TaskManager
 {
 public:
     typedef U32 AsyncTaskId;
 
-    TaskManager();
-    ~TaskManager();
+    RecluseFramework_PUBLIC_API TaskManager();
+    RecluseFramework_PUBLIC_API ~TaskManager();
 
-    ResultCode      initialize();
-    ResultCode      cleanUp();
+    RecluseFramework_PUBLIC_API ResultCode      initialize();
+    RecluseFramework_PUBLIC_API ResultCode      cleanUp();
 
     // Push a task with the given priorities.
     // Likely want this to be pushed during update call, so that thread pool can take hold.
     // Parallel tasks are done when they are pushed with the same priority.
     // 0 is highest priority, with least priority values going up.
-    ResultCode      pushTask(TaskPriority priority, Task task);
+    RecluseFramework_PUBLIC_API ResultCode      pushTask(TaskPriority priority, Task task);
 
     // Asyncronous task, that does not run in parallel like the pushTask().
     // This task works without barriers, and should work separately.
-    AsyncTaskId     asyncTask(Task task, ThreadPool* pool);
-    void            waitForTask(AsyncTaskId taskId);
+    RecluseFramework_PUBLIC_API AsyncTaskId     asyncTask(Task task, ThreadPool* pool);
+    RecluseFramework_PUBLIC_API void            waitForTask(AsyncTaskId taskId);
 
     // Dispatch all pushed tasks that were called with pushTask(). 
     // Ensure any data within scope, should be called with this manually in the scope of that data to be processed.
     // Failure to do so will result in undefined behaviour, likely a crash.
-    ResultCode      dispatchTasks(ThreadPool* pool);
-    void            clearTasks();
+    RecluseFramework_PUBLIC_API ResultCode      dispatchTasks(ThreadPool* pool);
+    RecluseFramework_PUBLIC_API void            clearTasks();
 
 private:
     struct AsyncTask
@@ -62,7 +62,7 @@ private:
 
 // Task process is a separate asyncronous process, that runs independent of the main thread.
 // This would need to be used for anything that requires it's own independent execution.
-class RecluseFramework_PUBLIC_API TaskProcess
+class TaskProcess
 {
 
 public:
@@ -81,23 +81,25 @@ public:
         : m_onTask(onTask)
         , m_threadPoolRef(workerPool)
         , m_processName(processName ? processName : "")
-        , m_isRunning(false) { }
+        , m_isRunning(false)
+        , m_mainTask(nullptr)
+        , m_thread({}) { }
 
     ~TaskProcess() { }
 
     // Start the process.
-    ResultCode                  start();
+    RecluseFramework_PUBLIC_API ResultCode                  start();
 
     // Push a task with the given priorities.
     // Likely want this to be pushed during update call, so that thread pool can take hold.
     // Parallel tasks are done when they are pushed with the same priority.
     // 0 is highest priority, with least priority values going up.
-    ResultCode                  pushTask(TaskPriority priority, Task task) { return m_taskManager.pushTask(priority, task); }
+    RecluseFramework_PUBLIC_API ResultCode                  pushTask(TaskPriority priority, Task task) { return m_taskManager.pushTask(priority, task); }
 
     // Asyncronous task, that does not run in parallel like the pushTask().
     // This task works without barriers, and should work separately.
-    TaskManager::AsyncTaskId    asyncTask(Task task) { return m_taskManager.asyncTask(task, m_threadPoolRef); }
-    void                        waitForTask(TaskManager::AsyncTaskId taskId) { m_taskManager.waitForTask(taskId); }
+    RecluseFramework_PUBLIC_API TaskManager::AsyncTaskId    asyncTask(Task task) { return m_taskManager.asyncTask(task, m_threadPoolRef); }
+    RecluseFramework_PUBLIC_API void                        waitForTask(TaskManager::AsyncTaskId taskId) { m_taskManager.waitForTask(taskId); }
 
     // Get the process task that is running on this Process.
     OnProcessTask               getOnProcessTask() { return m_onTask; }
@@ -106,7 +108,7 @@ public:
     Bool                        isRunning() const  { return m_isRunning; }
 
     // Signal to the process. Can be called by the main task.
-    void                        signal(Signal signal = Signal_Notify);
+    RecluseFramework_PUBLIC_API void                        signal(Signal signal = Signal_Notify);
 
     // Dispatch all pushed tasks that were called with pushTask(). 
     // Ensure any data within scope, should be called with this manually in the scope of that data to be processed.
@@ -119,7 +121,7 @@ public:
 
     // Waits to join back with the caller thread. Will block the caller until this process is complete.
     // Will not attempt to join, if the process itself attempts to call this.
-    void                        join();
+    RecluseFramework_PUBLIC_API void                        join();
 
 private:
 

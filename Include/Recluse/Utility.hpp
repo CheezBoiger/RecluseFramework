@@ -389,6 +389,26 @@ constexpr R_FORCE_INLINE U32 makeBitset32(U32 offset, U32 size, U32 value)
     return ((value & ~(0xFFFFFFFF << size)) << offset);
 }
 
+class BitSetter32
+{
+public:
+    BitSetter32() : m_bits(0), m_base(0) { }
+    ~BitSetter32() { }
+
+    // 32bit.
+    uint append(uint size, uint value) 
+    { 
+        m_bits |= makeBitset32(m_base, size, value); 
+        m_base += size; 
+        return m_base; 
+    }
+
+    uint getValue() const { return m_bits; }    
+private:
+    uint m_bits;
+    uint m_base;
+};
+
 
 R_OS_CALL RecluseFramework_PUBLIC_API std::wstring asciiToWide(const std::string& str); 
 

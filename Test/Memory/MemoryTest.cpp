@@ -9,7 +9,7 @@ TEST(MemoryTest, LinearScratchMemoryStaticAllocate)
     const int varTest = 42;
 
     const float floatTest = 5.234f;
-    struct TestStruct { int v; char f; } testStruct;
+    struct TestStruct { int v; char f; };
 
     struct TestStruct* mo = scratchMemory.allocate<struct TestStruct>();
     int* t0 = scratchMemory.allocate<int>();

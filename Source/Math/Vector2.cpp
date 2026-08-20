@@ -249,7 +249,7 @@ Float2 normalize(const Float2& v)
 
 Float2 reflect(const Float2& incidence, const Float2& normal)
 {
-    return incidence - 2.0 * dot(incidence, normal) * normal;
+    return incidence - 2.0f * dot(incidence, normal) * normal;
 }
 
 

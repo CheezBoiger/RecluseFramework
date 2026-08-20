@@ -103,7 +103,7 @@ typedef struct
     FileBufferDataAsync*    pAsyncBuffer;
     std::string             filePath;
     File::Flags             flags;
-    ResultCode                 (*taskFn)       (FileBufferData*, const std::string&, File::Flags);
+    ResultCode                 (*taskFn)       (FileBufferData*, const std::string&, File::Flags) = nullptr;
 } FileBufferTemporary;
 
 
@@ -321,7 +321,7 @@ ResultCode File::read(void* ptr, U64 szBytes)
     }
 
     DWORD bytesRead = 0;
-    BOOL isRead     = ReadFile((HANDLE)m_fileHandle, ptr, szBytes, &bytesRead, NULL);
+    BOOL isRead     = ReadFile((HANDLE)m_fileHandle, ptr, static_cast<DWORD>(szBytes), &bytesRead, NULL);
 
     if (!isRead) 
     {

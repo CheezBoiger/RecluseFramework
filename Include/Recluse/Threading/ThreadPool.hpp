@@ -19,7 +19,7 @@ typedef std::function<void()> ThreadTask;
 // ThreadPool is a structure that handles the concurrent execution of tasks, without needing to 
 // re-create workers, and instead, re-use existing threads. The workers themselves will remain alive, 
 // until signalled to stop, and all remaining enqueued tasks have been completed.
-class RecluseFramework_PUBLIC_API ThreadPool 
+class ThreadPool 
 {
 public:
     enum Status 
@@ -39,18 +39,18 @@ public:
         Signal_Resume =(1<<2)
     };
 
-    ThreadPool(U32 numWorkers = 2);
-    ~ThreadPool();
+    RecluseFramework_PUBLIC_API ThreadPool(U32 numWorkers = 2);
+    RecluseFramework_PUBLIC_API ~ThreadPool();
 
     // Submits a task to the pool, this will be picked up by a worker thread 
     // and completed. 
-    ResultCode submitTask(ThreadTask job);
+    RecluseFramework_PUBLIC_API ResultCode submitTask(ThreadTask job);
     
     // Starts up the pool of workers, which will run concurrently until stop() is called.
-    void start();
+    RecluseFramework_PUBLIC_API void start();
 
     // Signals worker threads to stop, and finishes any remaining tasks in the pool.
-    void stop();
+    RecluseFramework_PUBLIC_API void stop();
 
     //ResultCode wait();
 

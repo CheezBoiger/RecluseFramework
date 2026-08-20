@@ -77,7 +77,7 @@
                         wchar_t werr[512]; \
                         { \
                             char err[512]; \
-                            sprintf(err, #expression ## "\n" ## #fmt, __VA_ARGS__); \
+                            sprintf_s(err, 512, #expression ## "\n" ## #fmt, __VA_ARGS__); \
                             R_WARN("Assert", "%s", err); \
                             MultiByteToWideChar(CP_UTF8, 0, err, 512, werr, 512); \
                         } \
@@ -93,7 +93,7 @@
                         wchar_t werr[512]; \
                         { \
                             char err[512]; \
-                            sprintf(err, #expression ## ", " ## #fmt, __VA_ARGS__); \
+                            sprintf_s(err, 512, #expression ## ", " ## #fmt, __VA_ARGS__); \
                             MultiByteToWideChar(CP_UTF8, 0, err, 512, werr, 512); \
                         } \
                         _set_error_mode(_OUT_TO_MSGBOX); \

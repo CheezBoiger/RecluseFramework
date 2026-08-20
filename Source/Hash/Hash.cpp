@@ -63,7 +63,7 @@ Hash32 recluseHash32(const void* dst, U64 szBytes)
 
 Hash32 hashJenkins(const void* dat, U32 szBytes)
 {
-    U32 i;
+    U32 i = 0;
     U32 hash = 0;
     const U8* key = reinterpret_cast<const U8*>(dat); // Data seen as bytes.
     while (i != szBytes)

@@ -117,7 +117,7 @@ static void stringifyMatrix(Log& log, const Matrix& m, U32 r, U32 c)
     {
         for (size_t col = 0; col < c; ++col) 
         {
-            oss << std::setw(15) << m(row, col);
+            oss << std::setw(15) << m(static_cast<uint>(row), static_cast<uint>(col));
         }
         oss << "\n";
     }

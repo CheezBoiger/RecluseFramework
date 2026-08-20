@@ -111,8 +111,6 @@ struct RecluseFramework_PUBLIC_API UInt4
     inline UInt4 operator-(const UInt4& rh) const;
     inline UInt4 operator*(const UInt4& rh) const;
     inline UInt4 operator/(const UInt4& rh) const;
-    
-    inline UInt4 operator-() const;
 
     inline UInt4 operator+(U32 scalar) const;
     inline UInt4 operator-(U32 scalar) const;

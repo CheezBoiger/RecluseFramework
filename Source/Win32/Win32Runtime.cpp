@@ -46,7 +46,7 @@ static struct
     RAWINPUT            lpb[16];                                            //< raw input.
     const DWORD         mainThreadId    = GetCurrentThreadId();         //< this is the main thread id!
     Bool                isInitialized   = false;
-} gWin32Runtime;
+} gWin32Runtime = {};
 
 
 // Call this first time on initialization, to initialize all our watch slots.
@@ -414,22 +414,22 @@ LRESULT CALLBACK win32RuntimeProc(HWND hwnd,UINT uMsg, WPARAM wParam, LPARAM lPa
         }
         case WM_ACTIVATEAPP:
         {
-            if (wParam == true)
+            if (wParam == 1)
             {
                 if (pWindow && !pWindow->isShowing() && (pWindow->isFullscreen() && !pWindow->isBorderless()))
                 {
-                    R_DEBUG("Win32", "Restoring window. hwnd=0x%08x, wParam=0x%08x, lParam=0x%08x", hwnd, wParam, lParam);
+                    R_DEBUG("Win32", "Restoring window. hwnd=0x%08x, wParam=0x%08x, lParam=0x%08x", hwnd, (i32)wParam, (i32)lParam);
                     //SetForegroundWindow(hwnd);
                     //pWindow->restore();
                     //pWindow->setScreenSize(pWindow->getWidth(), pWindow->getHeight());
                     pWindow->overrideRestored(true);
                 }
             }
-            if (wParam == false)
+            if (wParam == 0)
             {
                 if (pWindow && pWindow->isShowing() && (pWindow->isFullscreen() && !pWindow->isBorderless()))
                 {
-                    R_DEBUG("Win32", "Minimizing window. hwnd=0x%08x, wParam=0x%08x, lParam=0x%08x", hwnd, wParam, lParam);
+                    R_DEBUG("Win32", "Minimizing window. hwnd=0x%08x, wParam=0x%08x, lParam=0x%08x", hwnd, (i32)wParam, (i32)lParam);
                     pWindow->minimize();
                     //pWindow->overrideMinimized(true);
                 }

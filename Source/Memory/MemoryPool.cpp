@@ -143,7 +143,7 @@ void MemoryPool::preAllocate(U64 szBytes, U64 pageSz)
 
     if (pageSz > 0)
     {
-        m_baseAddr = (UPtr)pageAlignedMalloc(allocationSizeBytes, pageSz);
+        m_baseAddr = (UPtr)pageAlignedMalloc(allocationSizeBytes, (u32)pageSz);
         m_flags |= IsPaged;
     }
     else
@@ -211,7 +211,7 @@ Bool MemoryPool::resize(U64 newSizeBytes, U64 pageSize)
 
     void* newMemoryBase = nullptr;
     if (m_flags & IsPaged)
-        newMemoryBase = pageAlignedMalloc(newSizeBytes, pageSize);
+        newMemoryBase = pageAlignedMalloc(newSizeBytes, (u32)pageSize);
     else
         newMemoryBase = malloc(newSizeBytes);
 
