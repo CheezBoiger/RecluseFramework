@@ -10,18 +10,18 @@ namespace Recluse {
 
 // Quick scratch memory allocator, uses the linear allocation strategy to 
 // suballocate quick blocks for user compute.
-// sizeBytes is the current max size of the memory heap to allocate from.
+// defaultSizeBytes is the current max size of the memory heap to allocate from.
 // dynamic is whether the memory heap can resize, or reallocate more memory if out. This invalidates previous pointers if 
 // dynamic is true. If dynamic is false, then the memory heap will not reallocate more memory and will return nullptr if out of memory.
 // pageSz is the page size, for paged memory heap allocations. Usually, should be 0, unless a massive heap is needed.
-template<U32 sizeBytes, Bool dynamic = false, U32 pageSz = 0ull>
+template<U32 defaultSizeBytes, Bool dynamic = false, U32 pageSz = 0ull>
 class LinearScratchMemory
 {
 public:
     
-    LinearScratchMemory()
+    LinearScratchMemory(uint sizeBytes = defaultSizeBytes, uint pageSize = pageSz)
     {
-        initialize(sizeBytes, pageSz);
+        initialize(sizeBytes, pageSize);
     }
 
     ~LinearScratchMemory()
@@ -42,10 +42,8 @@ public:
             if (allocator->getLastError() == RecluseResult_OutOfMemory)
             {
                 // Resize with double to original, plus the requested size.
-                memArena.resize(memArena.getTotalSizeBytes() * 2 + sizeof(Type) * arrayCount, memArena.getPageSizeBytes());
-                allocator = (LinearAllocator*)memArena.getBaseAddress();
-                ResultCode result = allocator->rebase(memArena.getPtrAddressAt(sizeof(LinearAllocator)), memArena.getTotalSizeBytes() - sizeof(LinearAllocator));
-                if (result == RecluseResult_Ok)
+                Bool success = resize(memArena.getTotalSizeBytes() * 2 + sizeof(Type) * arrayCount, memArena.getPageSizeBytes());
+                if (success)
                     ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, alignment);
             }
         }
@@ -61,10 +59,8 @@ public:
             if (allocator->getLastError() == RecluseResult_OutOfMemory)
             {
                 // Resize with double to original, plus the requested size.
-                memArena.resize(memArena.getTotalSizeBytes() * 2 + sizeBytes, memArena.getPageSizeBytes());
-                allocator = (LinearAllocator*)memArena.getBaseAddress();
-                ResultCode result = allocator->rebase(memArena.getPtrAddressAt(sizeof(LinearAllocator)), memArena.getTotalSizeBytes() - sizeof(LinearAllocator));
-                if (result == RecluseResult_Ok)
+                Bool success = resize(memArena.getTotalSizeBytes() * 2 + sizeBytes, memArena.getPageSizeBytes());
+                if (success)
                     ptr = (void*)allocator->allocate(sizeBytes, alignment);
             }
         }
@@ -89,6 +85,14 @@ public:
     UPtr getBaseAddress() const
     {
         return memArena.getBaseAddress() + sizeof(LinearAllocator);
+    }
+
+    Bool resize(uint newSize, uint pageSize)
+    {
+        memArena.resize(newSize, pageSize);
+        allocator = (LinearAllocator*)memArena.getBaseAddress();
+        ResultCode result = allocator->rebase(memArena.getPtrAddressAt(sizeof(LinearAllocator)), memArena.getTotalSizeBytes() - sizeof(LinearAllocator));
+        return (result == RecluseResult_Ok);
     }
 
 private:
