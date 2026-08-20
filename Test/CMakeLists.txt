@@ -16,6 +16,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../Build/CMake/GenerateExports.cmake)
 # Grab the gtest system.
 include(FetchContent)
 
+# Disable GoogleTest installation rules
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+
 FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/refs/tags/v1.15.0.zip

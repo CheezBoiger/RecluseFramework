@@ -52,7 +52,7 @@ public:
         return ptr;
     }
 
-    void* allocateRaw(UPtr sizeBytes, U16 alignment = 1u)
+    void* allocateRaw(UPtr sizeBytes, U16 alignment = 0u)
     {
         R_ASSERT(alignment > 0 && sizeBytes > 0);
         void* ptr = (void*)allocator->allocate(sizeBytes, alignment);
