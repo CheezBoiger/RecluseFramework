@@ -1,5 +1,8 @@
 //
 #include <Recluse/Threading/Threading.hpp>
+#include <Recluse/Threading/ThreadPool.hpp>
+
+#include <array>
 #include <gtest/gtest.h>
 
 using namespace Recluse;
@@ -86,4 +89,31 @@ TEST(Task, MutexCounter)
     destroyMutex(mutex);
 
     EXPECT_EQ(result, 4);
+}
+
+TEST(Task, ThreadPoolTest)
+{
+    ThreadPool pool(2);
+
+    pool.start();
+
+    std::array<int, 10> unsorted = { 2, 4, 1, 0, 3, 4, 1, 0, 3, 2 };
+    pool.submitTask([&] () -> void {
+        uint start = 0;
+        uint end = 5;
+        std::sort(unsorted.begin() + start, unsorted.begin() + end);
+    });
+
+    pool.submitTask([&] () -> void {
+        uint start = 5;
+        uint end = 10;
+        std::sort(unsorted.begin() + start, unsorted.begin() + end);
+    });
+
+    pool.waitIdle();
+
+    for (uint i = 0; i < unsorted.size(); ++i)
+    {
+        EXPECT_EQ(i % 5, unsorted[i]);
+    }
 }

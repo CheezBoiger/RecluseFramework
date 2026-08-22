@@ -52,7 +52,8 @@ public:
     // Signals worker threads to stop, and finishes any remaining tasks in the pool.
     RecluseFramework_PUBLIC_API void stop();
 
-    //ResultCode wait();
+    // Blocking wait until the thread pool is finished and idle.
+    RecluseFramework_PUBLIC_API void waitIdle();
 
     //Bool isExecuting();
     

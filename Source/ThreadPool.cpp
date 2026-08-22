@@ -103,4 +103,23 @@ void ThreadPool::Worker::join()
 {
     joinThread(&thread);
 }
+
+
+void ThreadPool::waitIdle()
+{
+    while (true) 
+    {
+        ScopedCriticalSection _(m_taskCs);
+        Bool empty = m_jobTasks.empty();
+        if (empty)
+            break;
+    }
+
+    for (const auto& worker : m_threadWorkers)
+    {
+        // Spinlock until workers are done.
+        while (worker.status != Status_Idle && worker.status != Status_Stopped) {
+        }
+    }
+}
 } // Recluse

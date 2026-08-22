@@ -39,7 +39,7 @@ public:
         Type* ptr = (Type*)allocator->allocate(sizeof(Type) * arrayCount, alignment);
         if constexpr (dynamic)
         {
-            if (allocator->getLastError() == RecluseResult_OutOfMemory)
+            while (allocator->getLastError() == RecluseResult_OutOfMemory)
             {
                 // Resize with double to original, plus the requested size.
                 Bool success = resize(static_cast<uint>(memArena.getTotalSizeBytes() * 2 + sizeof(Type)) * arrayCount, static_cast<uint>(memArena.getPageSizeBytes()));
@@ -56,7 +56,7 @@ public:
         void* ptr = (void*)allocator->allocate(sizeBytes, alignment);
         if constexpr (dynamic)
         {
-            if (allocator->getLastError() == RecluseResult_OutOfMemory)
+            while (allocator->getLastError() == RecluseResult_OutOfMemory)
             {
                 // Resize with double to original, plus the requested size.
                 Bool success = resize(static_cast<uint>(memArena.getTotalSizeBytes() * 2 + sizeBytes), static_cast<uint>(memArena.getPageSizeBytes()));
