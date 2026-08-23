@@ -93,24 +93,29 @@ TEST(Task, MutexCounter)
 
 TEST(Task, ThreadPoolTest)
 {
-    ThreadPool pool(2);
-
-    pool.start();
-
+    ThreadPool otherPool(0);
     std::array<int, 10> unsorted = { 2, 4, 1, 0, 3, 4, 1, 0, 3, 2 };
-    pool.submitTask([&] () -> void {
-        uint start = 0;
-        uint end = 5;
-        std::sort(unsorted.begin() + start, unsorted.begin() + end);
-    });
 
-    pool.submitTask([&] () -> void {
-        uint start = 5;
-        uint end = 10;
-        std::sort(unsorted.begin() + start, unsorted.begin() + end);
-    });
+    {
+        ThreadPool pool(2);
 
-    pool.waitIdle();
+        pool.start();
+        pool.submitTask([&] () -> void {
+            uint start = 0;
+            uint end = 5;
+            std::sort(unsorted.begin() + start, unsorted.begin() + end);
+        });
+
+        pool.submitTask([&] () -> void {
+            uint start = 5;
+            uint end = 10;
+            std::sort(unsorted.begin() + start, unsorted.begin() + end);
+        });
+
+        otherPool = std::move(pool);
+    }
+
+    otherPool.waitIdle();
 
     for (uint i = 0; i < unsorted.size(); ++i)
     {

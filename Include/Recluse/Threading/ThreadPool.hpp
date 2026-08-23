@@ -42,6 +42,12 @@ public:
     RecluseFramework_PUBLIC_API ThreadPool(U32 numWorkers = 2);
     RecluseFramework_PUBLIC_API ~ThreadPool();
 
+    ThreadPool(const ThreadPool&) = delete;
+    ThreadPool& operator=(const ThreadPool&) = delete;
+
+    RecluseFramework_PUBLIC_API ThreadPool(ThreadPool&&) noexcept;
+    RecluseFramework_PUBLIC_API ThreadPool& operator=(ThreadPool&&) noexcept;
+
     // Submits a task to the pool, this will be picked up by a worker thread 
     // and completed. 
     RecluseFramework_PUBLIC_API ResultCode submitTask(ThreadTask job);
@@ -61,13 +67,20 @@ private:
     // The actual worker itself.
     struct Worker
     {
-        Worker(ThreadPool* pool = nullptr)
+        static const uint kBadIndex = ~0;
+
+        Worker(const CriticalSection& section = { }, ThreadPool* pool = nullptr, uint index = kBadIndex)
             : poolRef(pool)
+            , section(section)
             , signals(0)
+            , workerIndex(index)
             , status(Status_Stopped) { thread = { }; }
 
-        Thread  thread;
-        Status  status;
+        Thread                      thread;
+        Status                      status;
+        uint                        workerIndex;
+        CriticalSection::Reference  section;
+        ThreadPool*                 poolRef;
 
         ThreadTask  nextTask();
         void        signal(Signal signal) { signals |= signal; }
@@ -76,11 +89,12 @@ private:
         void        clearSignals() { signals = 0; }
 
     private:
-        U32     signals;
-        ThreadPool* poolRef;
+        U32         signals;
     };
 
     static U32 threadEntryTask(void* payload);
+
+    Worker* getWorkerData(uint index) { return &m_threadWorkers[index]; }
 
     // Tasks to complete, which are carried by worker threads.
     CriticalSection                     m_taskCs;

@@ -6,6 +6,8 @@
 #include "RecluseFramework_exports.hpp"
 #include "Recluse/Messaging.hpp"
 
+#include <memory>
+
 namespace Recluse {
 
 // Thread function, used and called as the start routine for creating threads.
@@ -131,11 +133,47 @@ private:
 class RecluseFramework_PUBLIC_API CriticalSection
 {
 public:
+    typedef void* Handle;
+
+    class RecluseFramework_PUBLIC_API Reference
+    {
+    public:
+        Reference(const CriticalSection& section = {})
+            : m_handleRef(section.m_section) { }
+
+        Reference(const Reference& reference)
+            : m_handleRef(reference.m_handleRef) { }
+
+        R_OS_CALL ResultCode enter();
+
+        // Returns Ok if the critical section is owned by this thread. Returns fail, if 
+        // the attempt fails.
+        R_OS_CALL ResultCode tryEnter();
+
+        R_OS_CALL ResultCode leave();
+    private:
+        Handle m_handleRef;
+    };
+
     CriticalSection()
         : m_section(nullptr)
     { }
     ~CriticalSection()
     { if (m_section) release(); m_section = nullptr; }
+
+    CriticalSection(const CriticalSection&) = delete;
+    CriticalSection& operator=(const CriticalSection&&) = delete;
+
+    CriticalSection(CriticalSection&& other) noexcept
+        : m_section(std::move(other.m_section))
+        { other.m_section = nullptr; }
+
+    CriticalSection& operator=(CriticalSection&& other) noexcept
+    {
+        m_section = other.m_section;
+        other.m_section = nullptr;
+        return *this;
+    }
 
     ResultCode initialize();
     ResultCode release();
@@ -151,7 +189,7 @@ public:
     Bool isInitialized() const { return !!m_section; }
 
 private:
-    void* m_section;
+    Handle m_section;
 };
 
 // C++ RAII critical section mechanism used for handling enter and exit
@@ -159,8 +197,14 @@ private:
 class RecluseFramework_PUBLIC_API ScopedCriticalSection
 {
 public:
-    ScopedCriticalSection(CriticalSection& cs)
+    ScopedCriticalSection(const CriticalSection& cs)
         : m_cs(cs)
+    {
+        m_cs.enter();
+    }
+
+    ScopedCriticalSection(const CriticalSection::Reference& ref)
+        : m_cs(ref)
     {
         m_cs.enter();
     }
@@ -170,7 +214,7 @@ public:
         m_cs.leave();
     }
 private:
-    CriticalSection& m_cs;
+    CriticalSection::Reference m_cs;
 };
 
 
@@ -178,7 +222,7 @@ class RecluseFramework_PUBLIC_API CriticalSectionGuard : public CriticalSection
 {
 public:
     CriticalSectionGuard() { initialize(); }
-    ~CriticalSectionGuard() { release(); }
+    ~CriticalSectionGuard() { if (isInitialized()) release(); }
 };
 
 

@@ -258,6 +258,28 @@ ResultCode CriticalSection::leave()
     return RecluseResult_Ok;
 }
 
+ResultCode CriticalSection::Reference::enter()
+{
+    R_STATIC_ASSERT(m_handleRef != NULL);
+    EnterCriticalSection((LPCRITICAL_SECTION)m_handleRef);
+    return RecluseResult_Ok;
+}
+
+
+ResultCode CriticalSection::Reference::tryEnter()
+{
+    R_STATIC_ASSERT(m_handleRef != NULL);
+    BOOL success = TryEnterCriticalSection((LPCRITICAL_SECTION)m_handleRef);
+    return (success ? RecluseResult_Ok : RecluseResult_Failed);
+}
+
+
+ResultCode CriticalSection::Reference::leave()
+{
+    R_STATIC_ASSERT(m_handleRef != NULL);
+    LeaveCriticalSection((LPCRITICAL_SECTION)m_handleRef);
+    return RecluseResult_Ok;
+}
 
 i32 fetchAdd(uptr ptr, i32 arg)
 {

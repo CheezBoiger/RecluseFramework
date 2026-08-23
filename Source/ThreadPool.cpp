@@ -48,7 +48,8 @@ ThreadPool::~ThreadPool()
 {
     // Need to clean up.
     stop();
-    m_taskCs.release();
+    if (m_taskCs.isInitialized())
+        m_taskCs.release();
 }
 
 
@@ -56,7 +57,7 @@ void ThreadPool::start()
 {
     for (auto& worker : m_threadWorkers)
     {
-        worker = Worker(this);
+        worker = Worker(m_taskCs, this);
         // Pass on this thread pool.
         worker.thread.payload = (void*)&worker;
         createThread(&worker.thread, threadEntryTask);
@@ -85,10 +86,10 @@ ResultCode ThreadPool::submitTask(ThreadTask job)
 ThreadTask ThreadPool::Worker::nextTask()
 {
     ThreadTask task = nullptr;
+    // Pick up the next front task, and remove from the queue.
+    ScopedCriticalSection _(section);
     if (poolRef)
     {
-        // Pick up the next front task, and remove from the queue.
-        ScopedCriticalSection _(poolRef->m_taskCs);
         if (!poolRef->m_jobTasks.empty())
         {
             task = poolRef->m_jobTasks.front();
@@ -121,5 +122,43 @@ void ThreadPool::waitIdle()
         while (worker.status != Status_Idle && worker.status != Status_Stopped) {
         }
     }
+}
+
+ThreadPool::ThreadPool(ThreadPool&& other) noexcept
+{
+    CriticalSection::Reference ref(other.m_taskCs);
+
+    ref.enter();
+
+    m_taskCs = std::move(other.m_taskCs);
+    m_jobTasks = std::move(other.m_jobTasks);
+    m_threadWorkers = std::move(other.m_threadWorkers);
+
+    for (auto& it : m_threadWorkers)
+    {
+        it.poolRef = this;
+    }
+
+    ref.leave();
+}
+
+ThreadPool& ThreadPool::operator=(ThreadPool&& other) noexcept
+{
+    CriticalSection::Reference ref(other.m_taskCs);
+
+    ref.enter();
+
+    m_taskCs = std::move(other.m_taskCs);
+    m_jobTasks = std::move(other.m_jobTasks);
+    m_threadWorkers = std::move(other.m_threadWorkers);
+
+    for (auto& it : m_threadWorkers)
+    {
+        it.poolRef = this;
+    }
+
+    ref.leave();
+
+    return *this;
 }
 } // Recluse
