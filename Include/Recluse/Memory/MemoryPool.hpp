@@ -54,6 +54,12 @@ public:
     // Memory can be malloc'ed or local, but won't be the responsibility of this pool to clean up.
     MemoryPool(void* ptr, U64 szBytes, U64 pagSz = 0ull);
 
+    MemoryPool(const MemoryPool& other);
+    MemoryPool(MemoryPool&& pool) noexcept;
+
+    MemoryPool&         operator=(const MemoryPool& other);
+    MemoryPool&         operator=(MemoryPool&& other) noexcept;
+
     ~MemoryPool();
         
     // Get the starting address of the memory pool.
@@ -93,7 +99,7 @@ public:
     Bool                isAllocated() { return !!m_totalSzBytes; }
 
     // Copy contents from source memory pool, to destination memory pool.
-    static void         copy(MemoryPool* dst, U64 dstOffset, MemoryPool* src, U64 srcOffset, U64 sizeBytes);
+    static void         copy(MemoryPool* dst, U64 dstOffset, const MemoryPool* src, U64 srcOffset, U64 sizeBytes);
     static void         copy(void* dst, U64 dstOffset, void* src, U64 srcOffset, U64 sizeBytes);
     static void         copy(UPtr dst, U64 dstOffset, UPtr src, U64 srcOffset, U64 sizeBytes);
 

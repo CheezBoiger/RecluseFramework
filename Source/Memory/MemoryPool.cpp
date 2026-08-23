@@ -11,7 +11,7 @@
 namespace Recluse {
 
 
-void MemoryPool::copy(MemoryPool* dst, U64 dstOffset, MemoryPool* src, U64 srcOffset, U64 sizeBytes)
+void MemoryPool::copy(MemoryPool* dst, U64 dstOffset, const MemoryPool* src, U64 srcOffset, U64 sizeBytes)
 {
     R_ASSERT_FORMAT(dst && src, "Either src or dst memory pools are nullptr!");
     R_ASSERT_FORMAT(sizeBytes > 0, "Requested 0 bytes to copy!");
@@ -229,5 +229,52 @@ Bool MemoryPool::resize(U64 newSizeBytes, U64 pageSize)
     m_pageSzBytes = pageSize;
 
     return true;
+}
+
+MemoryPool::MemoryPool(const MemoryPool& other)
+    : m_flags(other.m_flags)
+    , m_pScanStart(nullptr)
+{
+    // Do a deep copy.
+    preAllocate(m_totalSzBytes, m_pageSzBytes);
+    copy(this, 0, &other, 0, getTotalSizeBytes());
+}
+
+MemoryPool::MemoryPool(MemoryPool&& other) noexcept
+    : m_baseAddr(other.m_baseAddr)
+    , m_totalSzBytes(other.m_totalSzBytes)
+    , m_pageSzBytes(other.m_pageSzBytes)
+    , m_flags(other.m_flags)
+    , m_pScanStart(other.m_pScanStart)
+{
+    // move 
+    other.m_baseAddr = 0;
+    other.m_totalSzBytes = 0;
+    other.m_pageSzBytes = 0;
+    other.m_flags = 0;
+    other.m_pScanStart = nullptr;
+}
+
+MemoryPool& MemoryPool::operator=(const MemoryPool& other)
+{
+    preAllocate(other.getTotalSizeBytes(), other.getPageSizeBytes());
+    copy(this, 0, &other, 0, other.getTotalSizeBytes()); 
+    return *this;
+}
+
+MemoryPool& MemoryPool::operator=(MemoryPool&& other) noexcept
+{
+    m_baseAddr = other.m_baseAddr;
+    m_totalSzBytes = other.m_totalSzBytes;
+    m_pageSzBytes = other.m_pageSzBytes;
+    m_flags = other.m_flags;
+    m_pScanStart = other.m_pScanStart;
+
+    other.m_baseAddr = 0;
+    other.m_totalSzBytes = 0;
+    other.m_pageSzBytes = 0;
+    other.m_flags = 0;
+    other.m_pScanStart = nullptr;
+    return *this;
 }
 } // Recluse
