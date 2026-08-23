@@ -32,7 +32,7 @@ public:
     // Allocate and cast to Type. 
     // \param arrayCount The number of Type objects to allocate as an array. 1 is default. Should not be 0.
     template<typename Type>
-    Type* allocate(U32 arrayCount = 1u, U16 alignment = 0u)
+    Type* allocate(U32 arrayCount = 1u, U16 alignment = 1u)
     {
         R_ASSERT_FORMAT(arrayCount > 0, "Incorrect size passed to allocate.");
         if (arrayCount == 0) return nullptr;
@@ -50,7 +50,7 @@ public:
         return ptr;
     }
 
-    void* allocateRaw(UPtr sizeBytes, U16 alignment = 0u)
+    void* allocateRaw(UPtr sizeBytes, U16 alignment = 1u)
     {
         R_ASSERT(alignment > 0 && sizeBytes > 0);
         void* ptr = (void*)allocator->allocate(sizeBytes, alignment);

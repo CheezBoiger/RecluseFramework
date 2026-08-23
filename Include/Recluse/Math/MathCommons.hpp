@@ -55,7 +55,7 @@ static Bool isEven(T d)
 template<typename T>
 static Bool isPowerOf2(T d)
 {
-	return R_IS_POWER_OF_2(d);
+	return (d > 0) && R_IS_POWER_OF_2(d);
 }
 
 
