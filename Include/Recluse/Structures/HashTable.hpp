@@ -19,7 +19,7 @@ private:
 
 public:
 
-    HashTable();
+    HashTable() { }
 
 private:
     _Comparer       _comparer;
@@ -32,36 +32,130 @@ private:
 };
 
 
-template<typename _key, typename _value, size_t fixed_size, bool dynamic, typename _hash = std::hash<_key>>
+template<typename _key, typename _value, size_t fixed_size, typename _hash = std::hash<_key>>
 class fixed_unordered_map
 {
 public:
-    struct iterator
-    {
-        _key first;
-        _value& second;
-    };
+    typedef _value& value_reference;
+    typedef const _value& const_value_reference;
+    typedef _value* value_pointer;
+    typedef const _value* const_value_pointer;
+    typedef _key& key_referene;
 
-    fixed_unordered_map(size_t new_size = fixed_size);
-    fixed_unordered_map(const fixed_unordered_map& map);
-    fixed_unordered_map(fixed_unordered_map&& map);
-
-    fixed_unordered_map& operator=(const fixed_unordered_map& map) const;
-    fixed_unordered_map& operatpr=(fixed_unordered_map&& map)
-
-    _value& operator[](const _key& key);
-    const _value& operator[](const _key& key) const;
-
-    iterator& find(const _key& key);
-    const iterator& find(const _key& key) const;
-
-private:
     struct _key_value_pair
     {
         _key key;
         _value value;
+        Bool isUsed = false;
+        _key_value_pair() : isUsed(false) { }
     };
 
+    typedef fixed_unordered_map* _storage_ptr;
+
+    struct iterator
+    {
+    private:
+        _storage_ptr storage;
+        size_t index;
+        void skip_if_invalid() {
+            if (!storage) return;
+            while (index < storage->max_size && !storage->container[index].isUsed)
+                ++index;
+        }
+    public:
+        iterator(_storage_ptr storage, size_t index)
+            : storage(storage), index(index) { skip_if_invalid(); }
+
+        const_value_reference operator*() const { return storage->container[index].value; }
+        value_reference operator*() { return storage->container[index].value; }
+
+        value_pointer operator->() { return &storage->container[index].value; }
+        const_value_pointer operator->() const { return &storage->container[index].value; }
+
+        bool operator==(const iterator& other) const {
+            return (storage == other.storage) && (index == other.index);
+        }
+
+        bool operator!=(const iterator& other) const {
+            return !(*this == other);
+        }
+
+        iterator operator++(int) {
+            iterator temp = *this;
+            ++(*this);
+            return tmp;
+        }
+
+        iterator operator++() {
+            ++index;
+            skip_if_invalid();
+        }
+    };
+
+    typedef const iterator const_iterator;
+
+    fixed_unordered_map(size_t new_size = fixed_size) 
+        : max_size(new_size) {
+        container = new _key_value_pair[max_size];    
+    }
+
+    fixed_unordered_map(const fixed_unordered_map& map) { }
+    fixed_unordered_map(fixed_unordered_map&& map) { }
+
+    ~fixed_unordered_map() {
+        delete[] container;
+    }
+
+    fixed_unordered_map& operator=(const fixed_unordered_map& map) const { return *this; }
+    fixed_unordered_map& operator=(fixed_unordered_map&& map) { return *this; }
+
+    value_reference operator[](const _key& key) {
+        size_t start_index = _hasher(key) % max_size;
+        size_t index = start_index;
+        do {
+            if (!container[index].isUsed) {
+                container[index].key = key;
+                container[index].isUsed = true;
+                return container[index].value;
+            }
+            if (container[index].isUsed && (container[index].key == container[index].key)) {
+                return container[index].value;
+            }
+        } while (index != start_index);
+        return container[index].value;
+    }
+    const _value& operator[](const _key& key) const;
+
+    iterator find(const _key& key) {
+        if (max_size == 0) return end();
+        size_t start_idx = _hasher(key) % max_size;
+        size_t index = start_idx;
+        do {
+            if (container[index].isUsed && container[index].key == key) {
+                return iterator(this, index);
+            }
+            index = (index + 1) % max_size;
+        } while (index != start_idx);
+        return end();
+    }
+
+    iterator find(const _key& key) const {
+        if (max_size == 0) return end();
+        size_t start_idx = _hasher(key) % max_size;
+        size_t index = start_idx;
+        do {
+            if (container[index].isUsed && container[index].key == key) {
+                return iterator(this, index);
+            }
+            index = (index + 1) % max_size;
+        } while (index != start_idx);
+        return end();
+    }
+
+    const_iterator begin() { return iterator(this, 0); }
+    const_iterator end() { return iterator(this, max_size); }
+    
+private:
     _hash _hasher;
     _key_value_pair* container;
     size_t max_size;

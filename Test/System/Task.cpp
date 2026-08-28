@@ -1,6 +1,7 @@
 //
 #include <Recluse/Threading/Threading.hpp>
 #include <Recluse/Threading/ThreadPool.hpp>
+#include <Recluse/Structures/HashTable.hpp>
 
 #include <array>
 #include <gtest/gtest.h>
@@ -121,4 +122,23 @@ TEST(Task, ThreadPoolTest)
     {
         EXPECT_EQ(i % 5, unsorted[i]);
     }
+}
+
+TEST(StructureTest, TestFixedMap)
+{
+    fixed_unordered_map<int, char, 8> stuff;
+    stuff[1] = 'c';
+    stuff[2] = 'd';
+    stuff[1] = 's';
+
+    auto& it = stuff.find(1);
+    EXPECT_NE(it, stuff.end());
+    EXPECT_EQ(*it, 's');
+    
+    auto& ff = stuff.find(2);
+    EXPECT_NE(ff, stuff.end());
+    EXPECT_EQ(*ff, 'd');
+
+    auto& mm = stuff.find(128);
+    EXPECT_EQ(mm, stuff.end());
 }
