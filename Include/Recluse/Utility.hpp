@@ -409,6 +409,48 @@ private:
     uint m_base;
 };
 
+class PacketBuilder
+{
+public:
+    PacketBuilder(void* ptr) : ptr(reinterpret_cast<UPtr>(ptr)) { }
+
+    template<typename Type>
+    Type* write(const Type& t = { }, U16 alignment = 1) {
+        UPtr curr = ptr;
+        UPtr aligned = align(curr, alignment);
+        Type* result = new (reinterpret_cast<void*>(aligned)) Type(t);
+        ptr = aligned + sizeof(Type);
+        return result;
+    }
+
+    UPtr raw() { return ptr; }
+
+private:
+    UPtr ptr;
+};
+
+class SequentialBufferReader {
+public:
+    explicit SequentialBufferReader(UPtr baseAddress) 
+        : m_current(baseAddress), m_bytesRead(0ull) {}
+
+    template <typename T>
+    T* consume(size_t count = 1, u16 alignment = 1u) 
+    {
+        UPtr curr = m_current;
+        UPtr aligned = align(curr, alignment);
+        T* result = reinterpret_cast<T*>(aligned);
+        m_bytesRead += (aligned + sizeof(T) * count) - m_current;
+        m_current = aligned + sizeof(T) * count;
+        return result;
+    }
+
+    U64 bytesRead() const { return m_bytesRead; }
+
+private:
+    UPtr m_current;
+    U64 m_bytesRead;
+};
 
 R_OS_CALL RecluseFramework_PUBLIC_API std::wstring asciiToWide(const std::string& str); 
 
