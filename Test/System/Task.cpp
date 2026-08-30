@@ -142,3 +142,20 @@ TEST(StructureTest, TestFixedMap)
     auto& mm = stuff.find(128);
     EXPECT_EQ(mm, stuff.end());
 }
+
+TEST(StructureTest, FixedMapBig)
+{
+    fixed_unordered_map<int, std::string, 500> little;
+    
+    for (uint i = 0; i < 100; ++i)
+    {
+        little[i] = std::to_string(i);
+    }
+
+    for (uint i = 0; i < 100; ++i)
+    {
+        auto it = little.find(i);
+        EXPECT_NE(it, little.end());
+        EXPECT_EQ(*it, std::to_string(i));
+    }
+}

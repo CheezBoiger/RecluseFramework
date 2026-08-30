@@ -7,7 +7,7 @@ namespace Recluse {
 
 
 template<typename _Key, typename _Value, typename _Hash, typename _Comparer, typename _CompareEqual, typename _Allocator>
-class HashTable
+class hash_table
 {
 private:
 
@@ -19,7 +19,7 @@ private:
 
 public:
 
-    HashTable() { }
+    hash_table() { }
 
 private:
     _Comparer       _comparer;
@@ -31,7 +31,9 @@ private:
     U32             _totalEntriesCount;
 };
 
-
+// Fixed unordered map is a cache friendly map structure that is intended to stay with 
+// a constant sized table, and utilize open addressing to store collisions. It is best to use
+// for small data storage and caching, not intended for scaling.
 template<typename _key, typename _value, size_t fixed_size, typename _hash = std::hash<_key>>
 class fixed_unordered_map
 {
