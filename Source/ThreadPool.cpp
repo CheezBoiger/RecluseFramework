@@ -75,7 +75,7 @@ void ThreadPool::stop()
 }
 
 
-ResultCode ThreadPool::submitTask(ThreadTask job)
+ResultCode ThreadPool::submitTaskInternal(ThreadTask job)
 {
     ScopedCriticalSection _(m_taskCs);
     m_jobTasks.push_back(job);

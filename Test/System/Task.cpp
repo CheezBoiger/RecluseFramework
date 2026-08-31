@@ -4,6 +4,9 @@
 #include <Recluse/Structures/HashTable.hpp>
 
 #include <array>
+#include <atomic>
+#include <chrono>
+#include <numeric>
 #include <gtest/gtest.h>
 
 using namespace Recluse;
@@ -158,4 +161,153 @@ TEST(StructureTest, FixedMapBig)
         EXPECT_NE(it, little.end());
         EXPECT_EQ(*it, std::to_string(i));
     }
+}
+
+class ThreadPoolTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // Shared test fixture setup if needed
+    }
+};
+
+// 1. Basic Task Execution
+TEST_F(ThreadPoolTest, SubmitsAndExecutesBasicTask) {
+    ThreadPool pool(2);
+    pool.start();
+
+    std::atomic<bool> executed{false};
+    pool.submitTask([&executed]() {
+        executed = true;
+    });
+
+    pool.waitIdle();
+    EXPECT_TRUE(executed.load());
+    pool.stop();
+}
+
+// 2. Variadic Argument Forwarding
+TEST_F(ThreadPoolTest, ForwardsMultipleArgumentsCorrectly) {
+    ThreadPool pool(2);
+    pool.start();
+
+    int resultInt = 0;
+    std::string resultStr;
+
+    auto task = [](int a, double b, const std::string& str, int& outInt, std::string& outStr) {
+        outInt = a + static_cast<int>(b);
+        outStr = str + " World";
+    };
+
+    pool.submitTask(task, 10, 5.5, "Hello", std::ref(resultInt), std::ref(resultStr));
+    pool.waitIdle();
+
+    EXPECT_EQ(resultInt, 15);
+    EXPECT_EQ(resultStr, "Hello World");
+    pool.stop();
+}
+
+// 3. Move-Only Types Forwarding
+//TEST_F(ThreadPoolTest, HandlesMoveOnlyArguments) {
+//    ThreadPool pool(2);
+//    pool.start();
+//
+//    auto uniquePtr = std::make_unique<int>(42);
+//    std::atomic<int> value{0};
+//
+//    auto task = [](std::unique_ptr<int> ptr, std::atomic<int>& val) {
+//        val = *ptr;
+//    };
+//
+//    pool.submitTask(task, std::move(uniquePtr), std::ref(value));
+//    pool.waitIdle();
+//
+//    EXPECT_EQ(value.load(), 42);
+//    pool.stop();
+//}
+
+// 4. Concurrent Throughput & Data Races
+TEST_F(ThreadPoolTest, ExecutesMultipleTasksConcurrently) {
+    const uint32_t numThreads = 4;
+    const int taskCount = 1000;
+    ThreadPool pool(numThreads);
+    pool.start();
+
+    std::atomic<int> counter{0};
+    for (int i = 0; i < taskCount; ++i) {
+        pool.submitTask([&counter]() {
+            counter.fetch_add(1, std::memory_order_relaxed);
+        });
+    }
+
+    pool.waitIdle();
+    EXPECT_EQ(counter.load(), taskCount);
+    pool.stop();
+}
+
+// 5. Order Independence / Parallel Execution Proof
+TEST_F(ThreadPoolTest, WorkersExecuteInParallel) {
+    ThreadPool pool(2);
+    pool.start();
+
+    std::atomic<int> activeWorkers{0};
+    std::atomic<bool> overlapDetected{false};
+
+    auto longTask = [&activeWorkers, &overlapDetected]() {
+        int current = ++activeWorkers;
+        if (current > 1) {
+            overlapDetected = true;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        --activeWorkers;
+    };
+
+    pool.submitTask(longTask);
+    pool.submitTask(longTask);
+
+    pool.waitIdle();
+    EXPECT_TRUE(overlapDetected.load());
+    pool.stop();
+}
+
+// 6. Member Function Binding
+struct SampleWork {
+    int value = 0;
+    void add(int amount) { value += amount; }
+};
+
+TEST_F(ThreadPoolTest, BindsMemberFunctions) {
+    ThreadPool pool(1);
+    pool.start();
+
+    SampleWork obj;
+    pool.submitTask(&SampleWork::add, &obj, 25);
+
+    pool.waitIdle();
+    EXPECT_EQ(obj.value, 25);
+    pool.stop();
+}
+
+// 7. Stop Drains Remaining Tasks
+TEST_F(ThreadPoolTest, StopFlushesEnqueuedTasks) {
+    ThreadPool pool(1);
+    pool.start();
+
+    std::atomic<int> completedTasks{0};
+
+    // Block the single worker briefly
+    pool.submitTask([]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    });
+
+    // Queue up additional tasks
+    for (int i = 0; i < 5; ++i) {
+        pool.submitTask([&completedTasks]() {
+            completedTasks.fetch_add(1);
+        });
+    }
+
+    // stop() should block until all enqueued tasks complete
+    pool.waitIdle();
+    pool.stop();
+    EXPECT_EQ(completedTasks.load(), 5);
 }

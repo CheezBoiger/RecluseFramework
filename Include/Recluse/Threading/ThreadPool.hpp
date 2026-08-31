@@ -50,7 +50,18 @@ public:
 
     // Submits a task to the pool, this will be picked up by a worker thread 
     // and completed. 
-    RecluseFramework_PUBLIC_API ResultCode submitTask(ThreadTask job);
+    RecluseFramework_PUBLIC_API ResultCode submitTaskInternal(ThreadTask job);
+
+    // Remove the old submitTask declaration and replace it with a template:
+    template<typename F, typename... Args>
+    ResultCode submitTask(F&& f, Args&&... args)
+    {
+        // Package the function and its arguments into a std::function<void()>
+        ThreadTask job = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
+
+        // Pass the bound task into your existing internal submission logic
+        return submitTaskInternal(std::move(job));
+    }
     
     // Starts up the pool of workers, which will run concurrently until stop() is called.
     RecluseFramework_PUBLIC_API void start();
