@@ -88,7 +88,7 @@ private:
             , status(Status_Stopped) { thread = { }; }
 
         Thread                      thread;
-        Status                      status;
+        volatile Status             status;
         uint                        workerIndex;
         CriticalSection::Reference  section;
         ThreadPool*                 poolRef;
