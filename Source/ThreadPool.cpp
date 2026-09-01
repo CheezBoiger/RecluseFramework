@@ -21,10 +21,8 @@ U32 ThreadPool::threadEntryTask(void* payload)
     {
         // Try to pull the next task.
         ThreadTask task = worker->nextTask();
-        if (task)
+        if (task && worker->status == ThreadPool::Status_Running)
         {
-            worker->status = ThreadPool::Status_Running;
-
             task();
         }
         else
@@ -94,6 +92,7 @@ ThreadTask ThreadPool::Worker::nextTask()
         {
             task = poolRef->m_jobTasks.front();
             poolRef->m_jobTasks.pop_front();
+            status = ThreadPool::Status_Running;
         }
     }
     return task;
