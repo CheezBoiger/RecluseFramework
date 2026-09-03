@@ -53,9 +53,10 @@ ThreadPool::~ThreadPool()
 
 void ThreadPool::start()
 {
+    uint index = 0;
     for (auto& worker : m_threadWorkers)
     {
-        worker = Worker(m_taskCs, this);
+        worker = Worker(m_taskCs, this, index++);
         // Pass on this thread pool.
         worker.thread.payload = (void*)&worker;
         createThread(&worker.thread, threadEntryTask);

@@ -48,11 +48,11 @@ public:
     RecluseFramework_PUBLIC_API ThreadPool(ThreadPool&&) noexcept;
     RecluseFramework_PUBLIC_API ThreadPool& operator=(ThreadPool&&) noexcept;
 
-    // Submits a task to the pool, this will be picked up by a worker thread 
-    // and completed. 
-    RecluseFramework_PUBLIC_API ResultCode submitTaskInternal(ThreadTask job);
+    // Get the number of workers in the pool.
+    uint getWorkerCount() const { return (uint)m_threadWorkers.size(); }
 
-    // Remove the old submitTask declaration and replace it with a template:
+    // Submits a task to the pool, this will be picked up by a worker thread 
+    // and completed.    
     template<typename F, typename... Args>
     ResultCode submitTask(F&& f, Args&&... args)
     {
@@ -106,6 +106,8 @@ private:
     static U32 threadEntryTask(void* payload);
 
     Worker* getWorkerData(uint index) { return &m_threadWorkers[index]; }
+
+    RecluseFramework_PUBLIC_API ResultCode submitTaskInternal(ThreadTask job);
 
     // Tasks to complete, which are carried by worker threads.
     CriticalSection                     m_taskCs;
