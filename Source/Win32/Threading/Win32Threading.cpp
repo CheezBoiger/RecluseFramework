@@ -56,7 +56,7 @@ ResultCode joinThread(Thread* pThread)
     
     WaitForSingleObject(pThread->handle, INFINITE);
     GetExitCodeThread(pThread->handle, (LPDWORD)&pThread->resultCode);
-    pThread->threadState = ThreadState_NotRunning;
+    pThread->threadState = ThreadState_Stopped;
 
     return RecluseResult_Ok;
 }

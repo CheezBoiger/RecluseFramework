@@ -163,6 +163,59 @@ TEST(StructureTest, FixedMapBig)
     }
 }
 
+TEST(Task, ValidatesWorkerIds) 
+{
+    const uint32_t numWorkers = 4;
+    Recluse::ThreadPool pool(numWorkers);
+
+    // 1. Verify worker count before starting
+    EXPECT_EQ(pool.getWorkerCount(), numWorkers);
+
+    pool.start();
+
+    // 2. Collect all worker IDs exposed by the pool
+    std::vector<Recluse::U64> knownWorkerIds;
+    knownWorkerIds.reserve(numWorkers);
+
+    for (uint32_t i = 0; i < pool.getWorkerCount(); ++i) 
+    {
+        Recluse::U64 id = pool.getWorkerId(i);
+        // Ensure ID is set and not equal to the default uninitialized index constant (~0)
+        EXPECT_NE(id, static_cast<Recluse::U64>(Recluse::ThreadPool::kBadIndex));
+        knownWorkerIds.push_back(id);
+    }
+
+    // 3. Submit tasks that record the execution thread ID
+    std::atomic<int> completedTasks{0};
+    std::vector<Recluse::U64> executedOnThreads(numWorkers);
+
+    for (uint32_t i = 0; i < numWorkers; ++i) {
+        pool.submitTask([i, &executedOnThreads, &completedTasks]() {
+            // Get current thread ID (Assuming Threading infrastructure provides a way, 
+            // or cast std::this_thread::get_id() hash / integer equivalent)
+            Recluse::U64 currentThreadId = getCurrentThreadId(); // static_cast<Recluse::U64>(
+            //    std::hash<std::thread::id>{}(std::this_thread::get_id())
+            //);
+
+            executedOnThreads[i] = currentThreadId;
+            completedTasks.fetch_add(1, std::memory_order_relaxed);
+        });
+    }
+
+    pool.waitIdle();
+    EXPECT_EQ(completedTasks.load(), numWorkers);
+
+    // 4. Verify that each execution thread ID matches one of the known worker IDs
+    for (Recluse::U64 execId : executedOnThreads) {
+        auto it = std::find(knownWorkerIds.begin(), knownWorkerIds.end(), execId);
+        EXPECT_NE(it, knownWorkerIds.end()) 
+            << "Task executed on thread ID " << execId 
+            << ", which does not match any registered worker ID in ThreadPool.";
+    }
+
+    pool.stop();
+}
+
 class ThreadPoolTest : public ::testing::Test {
 protected:
     void SetUp() override {

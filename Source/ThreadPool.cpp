@@ -1,6 +1,8 @@
 //
 #include "Recluse/Threading/ThreadPool.hpp"
 
+#include <thread>
+
 namespace Recluse {
 
 
@@ -14,7 +16,9 @@ U32 ThreadPool::threadEntryTask(void* payload)
         return RecluseResult_Failed;
     }
 
+    // Initialize the worker's status and id.
     worker->status = ThreadPool::Status_Running;
+    worker->workerId = getCurrentThreadId();
 
     // Check and loop while we aren't signaled to stop.
     while (!(worker->getSignals() & ThreadPool::Signal_Stop))
@@ -61,6 +65,8 @@ void ThreadPool::start()
         worker.thread.payload = (void*)&worker;
         createThread(&worker.thread, threadEntryTask);
     }
+    // Wait until all threads are initialized and idle.
+    waitIdle();
 }
 
 

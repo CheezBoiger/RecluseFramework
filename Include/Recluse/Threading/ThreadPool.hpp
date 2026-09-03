@@ -22,6 +22,8 @@ typedef std::function<void()> ThreadTask;
 class ThreadPool 
 {
 public:
+    static const uint kBadIndex = ~0;
+
     enum Status 
     {
         Status_Idle,
@@ -51,6 +53,9 @@ public:
     // Get the number of workers in the pool.
     uint getWorkerCount() const { return (uint)m_threadWorkers.size(); }
 
+    // Obtain the worker id of a specific worker in the pool.
+    U64 getWorkerId(uint index) const { return m_threadWorkers[index].workerId; }
+
     // Submits a task to the pool, this will be picked up by a worker thread 
     // and completed.    
     template<typename F, typename... Args>
@@ -78,20 +83,23 @@ private:
     // The actual worker itself.
     struct Worker
     {
-        static const uint kBadIndex = ~0;
-
         Worker(const CriticalSection& section = { }, ThreadPool* pool = nullptr, uint index = kBadIndex)
             : poolRef(pool)
             , section(section)
             , signals(0)
             , workerIndex(index)
-            , status(Status_Stopped) { thread = { }; }
+            , workerId(static_cast<U64>(kBadIndex))
+            , status(Status_Running) // Status assumes it is running, until it is signaled to idle or stop. 
+        {
+            thread = { };
+        }
 
         Thread                      thread;
         volatile Status             status;
         uint                        workerIndex;
         CriticalSection::Reference  section;
         ThreadPool*                 poolRef;
+        volatile U64                workerId;
 
         ThreadTask  nextTask();
         void        signal(Signal signal) { signals |= signal; }

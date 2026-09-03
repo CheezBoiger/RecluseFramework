@@ -24,7 +24,8 @@ enum ThreadResultCode
 
 enum ThreadState 
 {
-    ThreadState_NotRunning,
+    ThreadState_Stopped,
+    ThreadState_Starting,
     ThreadState_Running,
     ThreadState_Suspended,
     ThreadState_Idle,
