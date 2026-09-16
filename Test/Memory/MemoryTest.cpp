@@ -1,36 +1,36 @@
 //
 #include <gtest/gtest.h>
-#include <Recluse/Memory/LinearScratchMemory.hpp>
+#include <Recluse/Memory/MemoryArena.hpp>
 
-TEST(MemoryTest, LinearScratchMemoryStaticAllocate)
+TEST(MemoryTest, MemoryArenaStaticAllocate)
 {
     using namespace Recluse;
-    LinearScratchMemory<1024> scratchMemory;
+    MemoryArena<1024> memoryArena;
     const int varTest = 42;
 
     const float floatTest = 5.234f;
     struct TestStruct { int v; char f; };
 
-    struct TestStruct* mo = scratchMemory.allocate<struct TestStruct>();
-    int* t0 = scratchMemory.allocate<int>();
+    struct TestStruct* mo = memoryArena.allocate<struct TestStruct>();
+    int* t0 = memoryArena.allocate<int>();
 
     *t0 = varTest;
 
-    float* t1 = scratchMemory.allocate<float>();
+    float* t1 = memoryArena.allocate<float>();
 
     *t1 = floatTest;
 
-    struct TestStruct* t2 = scratchMemory.allocate<struct TestStruct>(2);
+    struct TestStruct* t2 = memoryArena.allocate<struct TestStruct>(2);
 
     EXPECT_EQ(varTest, *t0);
     EXPECT_EQ(floatTest, *t1);
 }
 
-TEST(MemoryTest, LinearScratchMemoryDynamic)
+TEST(MemoryTest, MemoryArenaDynamic)
 {
     using namespace Recluse;
     // Simple scratch memory, re-sizes to 32 byte allocations.
-    LinearScratchMemory<8, true> alloc;
+    MemoryArena<8, true> alloc;
 
     U64* c0 = alloc.allocate<U64>();
     ASSERT_NE(c0, nullptr);
@@ -53,10 +53,10 @@ TEST(MemoryTest, LinearScratchMemoryDynamic)
     EXPECT_EQ(1030, address[3]);
 }
 
-TEST(MemoryTest, LinearScratchMemoryDynamicHuge)
+TEST(MemoryTest, MemoryArenaDynamicHuge)
 {
     using namespace Recluse;
-    LinearScratchMemory<8, true> alloc;
+    MemoryArena<8, true> alloc;
 
     for (u32 i = 0; i < 10000; ++i)
     {
@@ -72,11 +72,11 @@ TEST(MemoryTest, LinearScratchMemoryDynamicHuge)
     }
 }
 
-TEST(MemoryTest, LinearScratchMemoryDynamicPaged)
+TEST(MemoryTest, MemoryArenaDynamicPaged)
 {
     using namespace Recluse;
     // Simple scratch memory, re-sizes to 32 byte allocations. Paged to 4096
-    LinearScratchMemory<8, true, 4096ull> alloc;
+    MemoryArena<8, true, 4096ull> alloc;
 
     U64* c0 = alloc.allocate<U64>();
     *c0 = 42;
@@ -100,7 +100,7 @@ TEST(MemoryTest, MemoryPoolClearDefault)
     using namespace Recluse;
     char data[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
     {
-        MemoryArena arena((void*)data, 10 * sizeof(char));
+        MemoryPool arena((void*)data, 10 * sizeof(char));
         arena.clear(0xF);
     }
 
@@ -108,7 +108,7 @@ TEST(MemoryTest, MemoryPoolClearDefault)
     EXPECT_EQ(data[1], 0xF);
 
     {
-        MemoryArena arena((void*)data, 10 * sizeof(char));
+        MemoryPool arena((void*)data, 10 * sizeof(char));
         char* ptr = (char*)arena.getBaseAddress();
         *ptr = 1;
     }

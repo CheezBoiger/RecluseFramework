@@ -113,7 +113,7 @@ set ( RECLUSE_CORE_BUILD
     ${RECLUSE_CORE_INCLUDE_MEMORY}/MemoryScan.hpp
     ${RECLUSE_CORE_INCLUDE_MEMORY}/PoolAllocationStrategy.hpp
     ${RECLUSE_CORE_INCLUDE_MEMORY}/LinearAllocationStrategy.hpp
-	${RECLUSE_CORE_INCLUDE_MEMORY}/LinearScratchMemory.hpp
+	${RECLUSE_CORE_INCLUDE_MEMORY}/MemoryArena.hpp
     ${RECLUSE_CORE_INCLUDE_MEMORY}/MemoryCommon.hpp
     ${RECLUSE_CORE_SOURCE_MEMORY}/MemoryPool.cpp
     ${RECLUSE_CORE_SOURCE_MEMORY}/BuddyAllocationStrategy.cpp

@@ -42,8 +42,9 @@ static void rlsFreeArray(Type* ptr)
 class MemoryScanner;
 
 
-// Memory Pool consists of an allocated space that will be used for suballocations, or committed space.
-// This arena is intended to be used with Allocators.
+// Memory Pool consists of a raw, allocated space that will be used for suballocations, or committed space.
+// It does not have any allocation strategies, it is simply a memory pool that can be used to suballocate from. 
+// It is up to the user to implement their own allocation strategy for this pool.
 class RecluseFramework_PUBLIC_API MemoryPool 
 {
 public:
@@ -137,7 +138,6 @@ private:
 
 
 // Name aliases
-typedef MemoryPool MemoryArena;
 typedef MemoryPool ScratchMem;
 typedef MemoryPool MemoryHeap;
 typedef ScratchMem ScratchMemory;
