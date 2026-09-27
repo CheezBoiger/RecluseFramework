@@ -32,7 +32,7 @@ public:
         UPtr szAddr          = super->getBaseAddress() + totalSzBytes;
         UPtr endAddr         = m_top + neededSzBytes;
     
-        if (endAddr >= szAddr) 
+        if (endAddr > szAddr) 
         {
             return RecluseResult_OutOfMemory;
         }

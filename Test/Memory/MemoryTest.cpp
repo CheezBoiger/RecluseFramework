@@ -5,7 +5,7 @@
 TEST(MemoryTest, MemoryArenaStaticAllocate)
 {
     using namespace Recluse;
-    MemoryArena<1024> memoryArena;
+    ArenaAllocator<1024> memoryArena;
     const int varTest = 42;
 
     const float floatTest = 5.234f;
@@ -30,7 +30,7 @@ TEST(MemoryTest, MemoryArenaDynamic)
 {
     using namespace Recluse;
     // Simple scratch memory, re-sizes to 32 byte allocations.
-    MemoryArena<8, true> alloc;
+    ArenaAllocator<8, true> alloc;
 
     U64* c0 = alloc.allocate<U64>();
     ASSERT_NE(c0, nullptr);
@@ -56,7 +56,7 @@ TEST(MemoryTest, MemoryArenaDynamic)
 TEST(MemoryTest, MemoryArenaDynamicHuge)
 {
     using namespace Recluse;
-    MemoryArena<8, true> alloc;
+    ArenaAllocator<8, true> alloc;
 
     for (u32 i = 0; i < 10000; ++i)
     {
@@ -76,7 +76,7 @@ TEST(MemoryTest, MemoryArenaDynamicPaged)
 {
     using namespace Recluse;
     // Simple scratch memory, re-sizes to 32 byte allocations. Paged to 4096
-    MemoryArena<8, true, 4096ull> alloc;
+    ArenaAllocator<8, true, 4096ull> alloc;
 
     U64* c0 = alloc.allocate<U64>();
     *c0 = 42;

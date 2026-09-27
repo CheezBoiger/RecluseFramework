@@ -138,9 +138,7 @@ private:
 
 
 // Name aliases
-typedef MemoryPool ScratchMem;
 typedef MemoryPool MemoryHeap;
-typedef ScratchMem ScratchMemory;
 
 } // Recluse
 #endif // RECLUSE_MEMORY_POOL_HPP
