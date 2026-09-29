@@ -119,6 +119,13 @@ class MutexGuard
 public:
     MutexGuard(const char* debugName = nullptr) { m_mutex = createMutex(debugName); }
     ~MutexGuard() { destroyMutex(m_mutex); }
+
+    MutexGuard(const MutexGuard&) = delete;
+    MutexGuard& operator=(const MutexGuard&) = delete;
+
+    MutexGuard(MutexGuard&& other) noexcept : m_mutex(other.m_mutex) { other.m_mutex = nullptr; }
+    MutexGuard& operator=(MutexGuard&& other) noexcept { m_mutex = other.m_mutex; other.m_mutex = nullptr; return *this; }
+
     operator Mutex() const { return m_mutex; }
     Mutex* operator*() { return &m_mutex; }
     Mutex& operator&() { return m_mutex; }
